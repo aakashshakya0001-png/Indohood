@@ -1,48 +1,46 @@
 # Indohood (इण्डोहूड) — System Architecture 🏛️
 
-**Indohood** is an AI-powered household waste segregation and civic green-credits ecosystem designed for **Track 03 (Waste & Energy)** of the **WeMakeDevs & AWS Environmental Hacks**.
+**Indohood** is an AI-powered household waste segregation, smart pickup scheduling, and civic green-credits ecosystem designed for **Track 03 (Waste & Energy)** of the **WeMakeDevs & AWS Environmental Hacks**.
 
 ---
 
-## 1. High-Level System Architecture
+## 1. End-to-End User Lifecycle & Architecture
+
+The system executes the complete closed-loop lifecycle:
+1. **User Authentication**: Resident & Eco-Picker profiles.
+2. **AI Waste Scan**: Amazon Bedrock Multimodal Vision identifies item & classifies it into 3 streams (🟢 Degradable, 🔵 Non-Degradable, 🔴 Landfill-Only).
+3. **Pickup Scheduling**: Resident schedules a waste collection date, time slot, and address.
+4. **Picker Verification**: Eco-picker arrives, inspects segregation, weighs bag, and marks collection verified.
+5. **Instant Eco-Credits Wallet Accrual**: Upon picker verification, Eco-Credits are unlocked directly into the user's wallet.
+6. **Carbon & Environmental Impact Analytics**: Live dashboard showing cumulative $CO_2$ emissions avoided (kg), landfill diverted (kg), and equivalent trees saved.
+7. **Green Rewards Store**: Redeem credits for 100% free sustainable goods or deep co-pay discounts.
 
 ```mermaid
-graph TB
-    subgraph ClientLayer ["Client Layer (Web & Mobile Browser)"]
-        UI["Indohood Web App\n(React + Vite + Tailwind CSS)"]
-        Cam["Live Camera / File Upload\n+ Instant Quick-Test Demo Items"]
-        WalletUI["Eco-Credits Wallet\n& Transaction Ledger"]
-        StoreUI["Indohood Green Store\n(Free Items + Co-Pay Discounts)"]
-    end
+sequenceDiagram
+    autonumber
+    actor User as Resident
+    participant App as Indohood Frontend
+    participant Server as Express Backend
+    participant Bedrock as Amazon Bedrock AI
+    actor Picker as Eco-Picker
 
-    subgraph APILayer ["Application & API Layer (Node.js / Express)"]
-        Router["Express API Gateway"]
-        ClassifyEp["/api/ai/classify-waste"]
-        WalletEp["/api/wallet"]
-        StoreEp["/api/store"]
-        FallbackEngine["Resilient Offline Mock/Cache Engine\n(Zero-Failure Demo Guarantee)"]
-    end
-
-    subgraph AWSLayer ["AWS Cloud & AI Services"]
-        Bedrock["Amazon Bedrock\n(Multimodal Vision: Claude 3.5 Sonnet / Amazon Nova Pro)"]
-        S3["Amazon S3\n(Waste Evidence & Audit Storage)"]
-        IAM["AWS IAM\n(Least-Privilege hackathon-dev Role)"]
-        Amplify["AWS Amplify / App Runner\n(Fullstack Hosting & CDN)"]
-    end
-
-    %% Flow connections
-    Cam -->|1. Base64 / Image Data| UI
-    UI -->|2. POST /api/ai/classify-waste| Router
-    Router --> ClassifyEp
-    ClassifyEp -->|3. InvokeModel / Converse API| Bedrock
-    ClassifyEp -.->|Fallback on timeout/error| FallbackEngine
-    Bedrock -->|4. JSON Classification + Guidance + Impact| ClassifyEp
-    ClassifyEp -->|5. Result + Eco-Credits Awarded| UI
-    UI -->|6. Sync Ledger| WalletEp
-    WalletEp --> WalletUI
-    WalletUI -->|7. Spend Credits| StoreEp
-    StoreEp --> StoreUI
-    StoreUI -->|8. Generate Voucher / Slip| UI
+    User->>App: 1. Login (Resident Profile)
+    User->>App: 2. Snap/Upload Waste Item
+    App->>Server: POST /api/ai/classify-waste (Image Data)
+    Server->>Bedrock: Multimodal Vision Prompt
+    Bedrock-->>Server: Item Category, Bin, Est. CO2, Packaging Tip
+    Server-->>App: AI Classification Card
+    User->>App: 3. Schedule Pickup (Select Date & Slot)
+    App->>Server: POST /api/pickups/schedule
+    Server-->>App: Pickup Booked (Status: Scheduled)
+    
+    Picker->>App: 4. Picker Verifies & Confirms Collection
+    App->>Server: POST /api/pickups/{id}/complete
+    Server->>Server: Unlock Eco-Credits & Compute CO2 Offset
+    Server-->>App: Credits Deposited!
+    
+    App-->>User: 5. Wallet Updated (+25 Credits) & Carbon Metrics Updated (-1.8kg CO2)
+    User->>App: 6. Redeem Credits in Indohood Green Store
 ```
 
 ---
@@ -62,39 +60,32 @@ flowchart LR
     D --> G[Authorized Scrap Recyclers]
     E --> H[Scientific Landfill / Incineration]
 
-    C & D & E --> I[🪙 Indohood Wallet]
-    I --> J[🛒 Spend in Green Store]
+    C & D & E --> I[📅 Schedule Pickup Date]
+    I --> J[🚛 Eco-Picker Verifies & Collects]
+    J --> K[🪙 Eco-Credits Added to User Wallet]
+    K --> L[📊 CO2 & Landfill Impact Dashboard]
+    K --> M[🛒 Spend in Green Store]
 ```
 
 ### Stream Details:
 1. 🟢 **Degradable (Green Bin)**:
    - *Items*: Kitchen waste, vegetable peels, leftover food, paper bags, cardboard, tea leaves, fallen leaves.
    - *Impact*: Diverted from methane-producing landfills to aerobic compost or paper recycling.
-   - *Reward*: **+10 to +15 Eco-Credits**
+   - *Reward*: **+10 to +15 Eco-Credits** upon verified pickup.
 2. 🔵 **Non-Degradable (Blue Bin)**:
    - *Items*: Single-use plastic bottles, milk pouches, glass bottles, aluminum cans, cables, discarded electronics, worn fabrics.
    - *Impact*: Diverted to circular material recycling streams.
-   - *Reward*: **+15 to +30 Eco-Credits** (higher incentive for high-durability pollutants like e-waste & plastic).
+   - *Reward*: **+15 to +30 Eco-Credits** upon verified pickup.
 3. 🔴 **Mixed / Landfill-Only (Red/Black Bin)**:
    - *Items*: Expired medicines (blister packs), sanitary napkins, used tissues, multi-layer laminated chip packets that cannot be separated.
    - *Impact*: Prevented from contaminating organic compost; marked for safe incineration or controlled disposal.
-   - *Reward*: **+5 Eco-Credits** (incentivizes responsible non-dumping).
+   - *Reward*: **+5 Eco-Credits** upon verified pickup.
 
 ---
 
 ## 3. Data Schema & API Contract
 
-### Waste Classification Endpoint: `POST /api/ai/classify-waste`
-
-**Request Body**:
-```json
-{
-  "image": "data:image/jpeg;base64,...", // Optional if using demo item
-  "demoId": "plastic_bottle"             // Optional preset item for demo pitching
-}
-```
-
-**Response Body**:
+### 1. Waste Classification Endpoint: `POST /api/ai/classify-waste`
 ```json
 {
   "success": true,
@@ -107,42 +98,50 @@ flowchart LR
   "disposalInstructions": [
     "Empty and rinse any residual liquid",
     "Crush the bottle to save collection space",
-    "Screw the cap back on or place in dry bin"
+    "Keep in blue dry bag ready for pickup"
   ],
   "creditsAwarded": 20,
   "environmentalImpact": {
     "weightGrams": 25,
     "co2PreventedGrams": 75,
-    "landfillDiverted": true,
-    "funFact": "Recycling 1 plastic bottle saves enough energy to power a 60W bulb for 3 hours!"
-  },
-  "aiEngine": "Amazon Bedrock (anthropic.claude-3-5-sonnet / amazon.nova-pro-v1:0)",
-  "timestamp": "2026-10-08T14:20:00Z"
+    "landfillDiverted": true
+  }
+}
+```
+
+### 2. Pickup Scheduling Endpoint: `POST /api/pickups/schedule`
+```json
+{
+  "itemId": "item_123",
+  "pickupDate": "2026-10-10",
+  "timeSlot": "Morning (9:00 AM - 12:00 PM)",
+  "address": "Flat 402, Green Valley Apts, New Delhi",
+  "notes": "Keep near main door"
+}
+```
+
+### 3. Picker Completion Endpoint: `POST /api/pickups/:id/complete`
+```json
+{
+  "actualWeightKg": 1.25,
+  "verificationNotes": "Correctly segregated in blue bag",
+  "pickerId": "picker_raju"
+}
+```
+**Response**:
+```json
+{
+  "success": true,
+  "status": "COMPLETED",
+  "creditsAwarded": 25,
+  "co2PreventedKg": 1.88,
+  "newWalletBalance": 165
 }
 ```
 
 ---
 
-## 4. Eco-Credits Wallet & Store Mechanics
-
-```mermaid
-stateDiagram-v2
-    [*] --> WasteScanned: User snaps item
-    WasteScanned --> AIAnalyzed: Amazon Bedrock Multimodal Vision
-    AIAnalyzed --> CreditsEarned: Credits calculated (+5 to +30)
-    CreditsEarned --> WalletBalance: Ledger updated
-    WalletBalance --> StoreRedeem: User browses Indohood Store
-    state StoreRedeem {
-        FreeItem: 100% Free with Credits (e.g. Seed Pen, Jute Bag)
-        CoPayItem: Deep Discount (e.g. Bottle: 100 Credits + ₹149)
-    }
-    StoreRedeem --> OrderConfirmed: Instant Voucher & QR Slip issued
-    OrderConfirmed --> [*]
-```
-
----
-
-## 5. AWS Services & Compliance Matrix
+## 4. AWS Services & Compliance Matrix
 
 | Service | Role in Indohood | Hackathon Justification |
 | :--- | :--- | :--- |
@@ -154,8 +153,7 @@ stateDiagram-v2
 
 ---
 
-## 6. Resilience & Zero-Fail Pitch Architecture
-During hackathon pitch sessions, live Wi-Fi drops or API rate-limits can jeopardize demos. Indohood implements a **Fail-Soft Architecture**:
-1. Bedrock API called with a 4.5-second connection timeout.
+## 5. Resilience & Zero-Fail Pitch Architecture
+1. Bedrock API called with automated connection retries and a 4.5-second timeout.
 2. If Amazon Bedrock experiences network latency or quota restrictions, the built-in intelligent fallback matching engine resolves the item from its semantic taxonomy database without throwing an error.
-3. Judges witness a smooth, unblocked user experience with accurate classification and credit accrual.
+3. 1-Click **"Simulate Picker Collection"** toggle enables single-screen demo during 3-minute hackathon video recordings.
