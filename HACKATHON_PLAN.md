@@ -1,8 +1,9 @@
-# Implementation Plan — Dobara: AI Household Waste Segregation & Green Credits
+# Implementation Plan — Indohood: AI Household Waste Segregation & Green Credits
 
 **Hackathon**: **Environmental Hacks** (Event 02 of the **Bharat Builds Tour** by WeMakeDevs & AWS)  
 **Track**: **Track 03: Waste and Energy** (Focus: *Segregation, Recycling, E-waste, Community Nudges*)  
 **Prize Target**: ₹2,00,000 cash + $2,000 AWS Credits + Fast-Track Interviews at Amazon (Top 10 students across tracks)  
+**Project Name**: **Indohood**  
 **Tagline**: *"Kachra alag karo, Eco-Credits pao, shopping par bachao!"*  
 **Core Thesis**: *"Reuse aur Segregation sabse sasti climate action hai."* AI eliminates segregation confusion in 1 second, and Eco-Credits turn civic responsibility into tangible monetary savings.
 
@@ -50,7 +51,7 @@ graph TD
 
 ## 2. Proposed System Architecture
 
-### Frontend (Next.js / Vite React + Tailwind CSS)
+### Frontend (React + Vite + Tailwind CSS)
 1. **Hero & Live Impact Dashboard**:
    - Total waste segregated (kg), Landfill diversion rate (%), and Total Eco-Credits distributed.
    - Quick "One-Click Quick Test" buttons with preset household items for instant judge demos (e.g. *Banana Peel*, *Plastic Bottle*, *Expired Medicine*, *Cardboard Box*).
@@ -69,8 +70,8 @@ graph TD
      - `+20 Credits` — Plastic Bottle segregation (Blue Bin)
      - `+15 Credits` — Kitchen Compost segregation (Green Bin)
      - `-100 Credits` — Redeemed Recycled Jute Bag
-4. **Dobara Direct Rewards Store (`/store`)**:
-   - Items can be redeemed directly from Dobara in two ways:
+4. **Indohood Rewards Store (`/store`)**:
+   - Items can be redeemed directly from Indohood in two ways:
      - 🎁 **100% Free with Credits** (e.g., Plantable Seed Pen: 40 Credits + ₹0, Recycled Notebook: 80 Credits + ₹0, Cloth Tote Bag: 120 Credits + ₹0).
      - ⚡ **Credits + Cash Co-pay** (e.g., Stainless Steel Water Bottle: 100 Credits + ₹149 [MRP ₹499], Home Compost Bin Kit: 150 Credits + ₹299 [MRP ₹799], Organic Groceries Hamper: 200 Credits + ₹249).
    - Dynamic redemption checkout modal: verifies wallet balance, applies credit discount, shows remaining cash if any, and issues an instant Order Confirmation & Delivery Slip!
@@ -117,21 +118,14 @@ graph TD
 
 ---
 
-## 4. User Review Required
-
-> [!IMPORTANT]
-> **Store Credits Mechanism**: For the hackathon MVP, we will simulate the Partner Store redemption with interactive discount coupon generation (instant QR code + promo code reveal). Does that match your vision for how users spend their credits?
-
----
-
-## 5. Verification Plan
+## 4. Verification Plan
 
 ### Automated / API Verification
 - Test `/api/ai/classify-waste` with test samples representing all 3 categories (Degradable, Non-Degradable, Mixed).
 - Test `/api/wallet` credit accrual and `/api/store/redeem` voucher generation.
 
 ### Manual / Live Demo Verification
-1. Open Dobara homepage $\rightarrow$ inspect clean waste-management branding and live impact stats.
+1. Open Indohood homepage $\rightarrow$ inspect clean waste-management branding and live impact stats.
 2. Scan a sample item (e.g. plastic bottle) $\rightarrow$ verify AI classifies as **🔵 Non-Degradable**, gives proper disposal advice, and credits wallet +20.
 3. Scan a used tissue $\rightarrow$ verify AI classifies as **🔴 Mixed (Landfill-only)**.
-4. Go to **Rewards Store** $\rightarrow$ click "Redeem ₹50 Kirana Voucher" using 100 credits $\rightarrow$ verify balance deducts and discount voucher appears with confetti.
+4. Go to **Indohood Store** $\rightarrow$ click "Redeem Plantable Seed Pen" using 40 credits $\rightarrow$ verify balance deducts and instant delivery confirmation appears with confetti.
