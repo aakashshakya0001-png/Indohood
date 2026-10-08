@@ -43,8 +43,8 @@ export default function Footer({ onNavigate }) {
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('store')} className="hover:text-emerald-400 transition-colors cursor-pointer">
-                  Green Rewards Store
+                <button onClick={() => onNavigate('hero')} className="hover:text-emerald-400 transition-colors cursor-pointer">
+                  Back to Top
                 </button>
               </li>
             </ul>

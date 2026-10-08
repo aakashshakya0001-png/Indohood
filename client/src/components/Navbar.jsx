@@ -36,12 +36,6 @@ export default function Navbar({ user, walletBalance, onOpenAuth, onLogout, onNa
           >
             How It Works
           </button>
-          <button 
-            onClick={() => onNavigate('store')} 
-            className="hover:text-emerald-600 transition-colors cursor-pointer"
-          >
-            Green Store
-          </button>
         </nav>
 
         {/* Right Top Action Buttons */}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Camera, Calendar, CheckCircle2, TrendingUp, Sparkles, ArrowRight } from 'lucide-react';
 
-export default function HowItWorks({ onGetStarted, onExploreStore }) {
+export default function HowItWorks({ onGetStarted }) {
   const steps = [
     {
       step: '01',
@@ -114,15 +114,10 @@ export default function HowItWorks({ onGetStarted, onExploreStore }) {
           <div className="flex items-center gap-3">
             <button
               onClick={onGetStarted}
-              className="px-5 py-2.5 rounded-xl font-bold text-xs text-stone-900 bg-emerald-400 hover:bg-emerald-300 transition-all cursor-pointer shadow-md active:scale-95"
+              className="px-6 py-3 rounded-xl font-bold text-xs text-stone-900 bg-emerald-400 hover:bg-emerald-300 transition-all cursor-pointer shadow-md active:scale-95 flex items-center gap-1.5"
             >
-              Join Indohood Now
-            </button>
-            <button
-              onClick={onExploreStore}
-              className="px-5 py-2.5 rounded-xl font-bold text-xs text-white bg-white/10 hover:bg-white/20 border border-white/20 transition-all cursor-pointer"
-            >
-              Explore Green Store
+              Join Indohood Today
+              <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>

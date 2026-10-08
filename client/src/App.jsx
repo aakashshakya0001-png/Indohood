@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import HowItWorks from './components/HowItWorks';
-import RewardsStoreSection from './components/RewardsStoreSection';
 import Footer from './components/Footer';
 import AuthModal from './components/AuthModal';
 
@@ -41,11 +40,6 @@ export default function App() {
     setCurrentUser(null);
   };
 
-  // Rewards Store Handler
-  const handleRedeemItem = (creditsDeducted) => {
-    setWalletBalance((prev) => Math.max(0, prev - creditsDeducted));
-  };
-
   return (
     <div className="min-h-screen bg-stone-50 font-sans text-stone-900 selection:bg-emerald-500 selection:text-white">
       {/* Top Navigation Bar with Login & Sign In buttons */}
@@ -66,16 +60,9 @@ export default function App() {
       {/* How Indohood Works (Closed-Loop Lifecycle) */}
       <HowItWorks
         onGetStarted={() => handleOpenAuth('signin')}
-        onExploreStore={() => handleNavigate('store')}
       />
 
-      {/* Indohood Direct Rewards Store */}
-      <RewardsStoreSection
-        walletBalance={walletBalance}
-        onRedeemItem={handleRedeemItem}
-      />
-
-      {/* Professional Footer */}
+      {/* Professional Normal Footer */}
       <Footer onNavigate={handleNavigate} />
 
       {/* Auth Modal for Login and Sign In */}
