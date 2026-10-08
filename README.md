@@ -99,17 +99,24 @@ Users convert good civic habits into tangible everyday savings:
 - Node.js `v20+` or `v24+`
 - AWS Account configured with Bedrock access (`ap-southeast-2` or `us-east-1`)
 
+### Repository Structure
+```
+Indohood/
+├── frontend/   # React 19 + Vite + Tailwind CSS Web Application
+├── backend/    # Express.js REST API Server with Amazon Bedrock Integration
+└── database/   # Relational SQL Schemas, JSON Seeds & Persistence Engine
+```
+
 ### Local Setup
 ```bash
-# Clone the repository
-git clone https://github.com/aakashshakya0001-png/Indohood.git
-cd Indohood
+# 1. Install dependencies for all tiers
+npm run install:all
 
-# Install dependencies (once scaffolding is executed)
-npm install
+# 2. Run the frontend (Vite dev server on port 5173)
+npm run dev:frontend
 
-# Run development server
-npm run dev
+# 3. Run the backend (Express API on port 5000)
+npm run dev:backend
 ```
 
 ---

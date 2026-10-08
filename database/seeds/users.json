@@ -1,0 +1,26 @@
+[
+  {
+    "id": "usr_resident_01",
+    "name": "Resident Citizen",
+    "email": "resident@indohood.in",
+    "role": "resident",
+    "address": "Flat 402, Green Valley Apartments, New Delhi",
+    "phone": "+91 98765 43210",
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
+    "bio": "Eco-conscious citizen driving zero-waste living and source segregation 🌱",
+    "walletBalance": 120,
+    "tier": "Tier 3 Master Recycler"
+  },
+  {
+    "id": "usr_picker_01",
+    "name": "Raju (Eco-Picker)",
+    "email": "raju@indohood.in",
+    "role": "picker",
+    "address": "Dwarka Sector 12, New Delhi",
+    "phone": "+91 98111 22334",
+    "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80",
+    "bio": "Certified circular waste aggregator & doorstep clean segregation verifier 🚛",
+    "assignedPickupsCount": 14,
+    "completedPickupsCount": 86
+  }
+]

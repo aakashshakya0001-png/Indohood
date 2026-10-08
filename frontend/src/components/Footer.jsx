@@ -1,5 +1,4 @@
 import React from 'react';
-import { Leaf, Heart, ExternalLink, ShieldCheck } from 'lucide-react';
 
 export default function Footer({ onNavigate }) {
   return (
@@ -10,14 +9,13 @@ export default function Footer({ onNavigate }) {
           {/* Column 1 & 2: Brand & Purpose */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-stone-900 font-bold shadow-md">
-                <Leaf className="w-5 h-5 stroke-[2.2] text-white" />
-              </div>
+              <img
+                src="/logo.png"
+                alt="IndoHood Logo"
+                className="w-10 h-10 object-contain rounded-xl bg-white/10 p-1 shadow-xs shrink-0"
+              />
               <span className="text-2xl font-black tracking-tight text-white">
-                Indohood
-              </span>
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800">
-                इण्डोहूड
+                IndoHood
               </span>
             </div>
 
@@ -25,9 +23,8 @@ export default function Footer({ onNavigate }) {
               Empowering Indian households to segregate at source, eliminate landfill waste through Amazon Bedrock multimodal AI, and turn civic responsibility into tangible Eco-Credits.
             </p>
 
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-stone-800/80 border border-stone-700/80 text-xs font-medium text-stone-300">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              Built for <strong className="text-white">WeMakeDevs & AWS Environmental Hacks</strong>
+            <div className="inline-flex items-center px-3 py-1.5 rounded-xl bg-stone-800/80 border border-stone-700/80 text-xs font-medium text-stone-300">
+              Powered by <strong className="text-white ml-1">WeMakeDevs & Amazon Web Services</strong>
             </div>
           </div>
 
@@ -55,18 +52,15 @@ export default function Footer({ onNavigate }) {
             <h4 className="text-xs font-extrabold uppercase tracking-wider text-stone-100 mb-4">
               3 Streams Guide
             </h4>
-            <ul className="space-y-2.5 text-sm">
-              <li className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                <span>🟢 Degradable (Green Bin)</span>
+            <ul className="space-y-2.5 text-sm text-stone-400">
+              <li className="hover:text-stone-200 transition-colors">
+                Degradable (Green Compost Bin)
               </li>
-              <li className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
-                <span>🔵 Non-Degradable (Blue Bin)</span>
+              <li className="hover:text-stone-200 transition-colors">
+                Non-Degradable (Blue Dry Recyclables)
               </li>
-              <li className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
-                <span>🔴 Landfill-Only (Red Bin)</span>
+              <li className="hover:text-stone-200 transition-colors">
+                Landfill-Only (Red/Black Refuse)
               </li>
             </ul>
           </div>
@@ -77,31 +71,23 @@ export default function Footer({ onNavigate }) {
               AWS Infrastructure
             </h4>
             <ul className="space-y-2 text-xs text-stone-400">
-              <li className="flex items-center gap-1.5">
-                <span className="text-amber-400">☁️</span> Amazon Bedrock (Claude / Nova)
-              </li>
-              <li className="flex items-center gap-1.5">
-                <span className="text-amber-400">🪣</span> Amazon S3 Proof Storage
-              </li>
-              <li className="flex items-center gap-1.5">
-                <span className="text-amber-400">🚀</span> AWS Amplify / App Runner
-              </li>
-              <li className="flex items-center gap-1.5">
-                <span className="text-amber-400">🔒</span> AWS IAM (hackathon-dev)
-              </li>
+              <li>Amazon Bedrock (Claude & Nova)</li>
+              <li>Amazon S3 Proof Storage</li>
+              <li>AWS Amplify / App Runner</li>
+              <li>AWS IAM (dev role)</li>
             </ul>
           </div>
 
         </div>
 
-        {/* Bottom Bar: Copyright & Note */}
+        {/* Bottom Bar: Copyright & Clean Text */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-stone-500">
           <p>
-            © {new Date().getFullYear()} <strong>Indohood</strong>. All rights reserved.
+            © {new Date().getFullYear()} <strong>IndoHood</strong>. All rights reserved.
           </p>
 
-          <p className="flex items-center gap-1">
-            Made with <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" /> for Indian Communities & Planet Earth 🌍
+          <p>
+            Civic Sustainability for Indian Communities & Planet Earth.
           </p>
         </div>
       </div>

@@ -1,0 +1,80 @@
+[
+  {
+    "id": "art_1",
+    "title": "Why Landfills Emit Methane and How Kitchen Segregation Stops It",
+    "topic": "Landfill Crisis",
+    "readTime": "2 min read",
+    "summary": "When food waste is dumped inside plastic bags, it decomposes anaerobically without oxygen, producing methane gas (CH₄)—a greenhouse pollutant 28x more potent than carbon dioxide over a 20-year horizon. Segregating wet waste allows aerobic decomposition into compost, cutting landfill fire risks and turning city waste into nutrient-dense soil conditioner.",
+    "takeaways": [
+      "Anaerobic landfill decomposition creates flammable methane pockets.",
+      "Aerobic home or society composting yields zero foul odor when balanced 2:1 with dry carbon leaves.",
+      "Every 1 kg of wet waste composted averts ~1.26 kg of greenhouse emissions."
+    ],
+    "image": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": "art_2",
+    "title": "The Lifecycle of a PET Bottle: How Clean Rinsing Multiplies Recycler Value",
+    "topic": "Plastic Recycling",
+    "readTime": "3 min read",
+    "summary": "PET (Polyethylene Terephthalate) is 100% recyclable into polyester yarn, sports apparel, and secondary packaging—but only if not contaminated with grease or food oils. When you rinse and crush your bottles, informal eco-pickers earn 40% higher market rates from mechanized material recovery facilities (MRFs).",
+    "takeaways": [
+      "Unwashed bottles often get rejected at sorting centers and diverted back to landfills.",
+      "Crushing bottles reduces transport volume by 70%, slashing collection truck diesel fuel.",
+      "Keep bottle caps inside or screwed loosely so small parts don't slip through conveyor screens."
+    ],
+    "image": "https://images.unsplash.com/photo-1562243061-204550d8a2c9?w=600&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": "art_3",
+    "title": "Old Phone Chargers & Wires: The Urban Copper Mine in Your Drawer",
+    "topic": "E-Waste Awareness",
+    "readTime": "2 min read",
+    "summary": "Electronic cables contain high-purity electrolytic copper and tin shielded by PVC. When burned illegally or dumped, they release toxic dioxins and lead into local water tables. Diverting just 1 metric ton of cables yields ~400 kg of copper, using 85% less energy than mining virgin chalcopyrite copper ore.",
+    "takeaways": [
+      "Never snip or burn wire insulation at home; authorized recyclers use cold mechanical granulators.",
+      "Copper is infinitely recyclable without losing electrical conductivity.",
+      "Store cables dry; moisture oxidizes copper connectors and lowers recycling grade."
+    ],
+    "image": "https://images.unsplash.com/photo-1588508065123-287b28e013da?w=600&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": "art_4",
+    "title": "Balcony Composting: The 2:1 Golden Rule for Odor-Free Apartments",
+    "topic": "Home Composting",
+    "readTime": "3 min read",
+    "summary": "Urban composting fails only when moisture is too high. The secret is the 'Brown to Green' balance: 2 handfuls of dry brown carbon (crushed dry leaves, egg cartons, shredded newspaper) for every 1 handful of wet kitchen greens (vegetable peels, tea bags, fruit skins). Turn it once a week for fresh, forest-scented compost.",
+    "takeaways": [
+      "Browns provide structure and air channels; greens provide moisture and nitrogen.",
+      "Avoid dairy, cooked oils, and meat in small balcony pots to prevent fruit flies.",
+      "Sprinkle a handful of garden soil or sour buttermilk to jumpstart beneficial microbial bacteria."
+    ],
+    "image": "https://images.unsplash.com/photo-1584473457406-6240486418e9?w=600&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": "art_5",
+    "title": "Expired Medicines & Sanitary Items: Why the Red/Black Bin Matters",
+    "topic": "Hazardous Waste",
+    "readTime": "2 min read",
+    "summary": "Flushing antibiotics down the toilet causes antimicrobial resistance in municipal water rivers, while dumping sanitary waste into compost bins spreads pathogens to field workers. The designated Landfill/Hazardous stream ensures high-temperature biomedical incineration and safe scientific containment.",
+    "takeaways": [
+      "Never flush antibiotics, pain killers, or syrups down household sinks.",
+      "Wrap sanitary pads in marked newspaper before disposal to protect eco-picker dignity.",
+      "Keep blister strip medicines separate from standard dry paper packaging."
+    ],
+    "image": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&auto=format&fit=crop&q=80"
+  },
+  {
+    "id": "art_6",
+    "title": "What Is the Circular Economy? Moving from 'Take-Make-Waste' to Closed Loops",
+    "topic": "Circular Economy",
+    "readTime": "3 min read",
+    "summary": "In the traditional linear economy, raw natural resources are extracted, processed into goods, and discarded after single use. A circular economy keeps materials cycling at their highest economic utility forever through reuse, refurbishment, and clean remanufacturing, decoupling human prosperity from natural resource depletion.",
+    "takeaways": [
+      "Circularity designs out waste before products are even manufactured.",
+      "Source segregation is the critical first link connecting homes to manufacturing mills.",
+      "Every eco-credit you earn on IndoHood represents raw materials kept in active use."
+    ],
+    "image": "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=600&auto=format&fit=crop&q=80"
+  }
+]

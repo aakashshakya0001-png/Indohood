@@ -1,0 +1,21 @@
+[
+  {
+    "id": "pk_initial_1",
+    "bookingRef": "IND-7842",
+    "userId": "usr_resident_01",
+    "itemId": "cardboard_bundle",
+    "itemName": "Delivery Cardboard Boxes (3 Pack)",
+    "itemIcon": "📦",
+    "stream": "degradable",
+    "streamLabel": "Degradable (Paper Pulp)",
+    "weightEst": "0.85 kg",
+    "credits": 15,
+    "co2Grams": 110,
+    "pickupDate": "2026-10-09",
+    "timeSlot": "Morning (9:00 AM - 12:00 PM)",
+    "address": "Flat 402, Green Valley Apartments, New Delhi",
+    "instructions": "Flattened and tied with jute string beside door",
+    "status": "SCHEDULED",
+    "createdAt": "2026-10-08T10:00:00Z"
+  }
+]
