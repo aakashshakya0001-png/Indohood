@@ -37,12 +37,6 @@ export default function Navbar({ user, walletBalance, onOpenAuth, onLogout, onNa
             How It Works
           </button>
           <button 
-            onClick={() => onNavigate('impact')} 
-            className="hover:text-emerald-600 transition-colors cursor-pointer"
-          >
-            Carbon Impact
-          </button>
-          <button 
             onClick={() => onNavigate('store')} 
             className="hover:text-emerald-600 transition-colors cursor-pointer"
           >

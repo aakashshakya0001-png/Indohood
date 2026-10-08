@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import HowItWorks from './components/HowItWorks';
-import ImpactDashboard from './components/ImpactDashboard';
 import RewardsStoreSection from './components/RewardsStoreSection';
 import Footer from './components/Footer';
 import AuthModal from './components/AuthModal';
@@ -15,13 +14,6 @@ export default function App() {
 
   // Eco-Credits Wallet State
   const [walletBalance, setWalletBalance] = useState(120);
-
-  // Real-Time Carbon & Environmental Impact Stats
-  const [impactStats, setImpactStats] = useState({
-    co2PreventedGrams: 4200, // 4.2 kg
-    landfillDivertedGrams: 6500, // 6.5 kg
-    itemsSegregated: 18,
-  });
 
   // Navigation Smooth Scroll Handler
   const handleNavigate = (sectionId) => {
@@ -75,12 +67,6 @@ export default function App() {
       <HowItWorks
         onGetStarted={() => handleOpenAuth('signin')}
         onExploreStore={() => handleNavigate('store')}
-      />
-
-      {/* Real-Time Carbon Emission ($CO_2$) & Environmental Impact Dashboard */}
-      <ImpactDashboard
-        impactStats={impactStats}
-        currentUser={currentUser}
       />
 
       {/* Indohood Direct Rewards Store */}

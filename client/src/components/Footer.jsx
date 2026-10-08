@@ -43,11 +43,6 @@ export default function Footer({ onNavigate }) {
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('impact')} className="hover:text-emerald-400 transition-colors cursor-pointer">
-                  Carbon Emission Metrics
-                </button>
-              </li>
-              <li>
                 <button onClick={() => onNavigate('store')} className="hover:text-emerald-400 transition-colors cursor-pointer">
                   Green Rewards Store
                 </button>
