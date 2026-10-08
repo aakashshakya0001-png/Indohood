@@ -37,20 +37,6 @@ export default function Navbar({ user, walletBalance, onOpenAuth, onLogout, onNa
             How It Works
           </button>
           <button 
-            onClick={() => onNavigate('scanner')} 
-            className="hover:text-emerald-600 transition-colors cursor-pointer flex items-center gap-1.5"
-          >
-            <Sparkles className="w-4 h-4 text-emerald-500" />
-            AI Scanner
-          </button>
-          <button 
-            onClick={() => onNavigate('pickups')} 
-            className="hover:text-emerald-600 transition-colors cursor-pointer flex items-center gap-1.5"
-          >
-            <Calendar className="w-4 h-4 text-teal-600" />
-            Pickups
-          </button>
-          <button 
             onClick={() => onNavigate('impact')} 
             className="hover:text-emerald-600 transition-colors cursor-pointer"
           >

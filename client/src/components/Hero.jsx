@@ -1,7 +1,7 @@
 import React from 'react';
 import { Sparkles, ArrowRight, ShieldCheck, Calendar, Coins, Recycle, Trees } from 'lucide-react';
 
-export default function Hero({ onStartScan, onExplorePickups }) {
+export default function Hero({ onGetStarted, onExploreHowItWorks }) {
   return (
     <section className="relative overflow-hidden pt-8 pb-16 lg:py-20 bg-gradient-to-b from-amber-50/40 via-stone-50 to-emerald-50/20">
       {/* Decorative ambient background glows */}
@@ -44,20 +44,19 @@ export default function Hero({ onStartScan, onExplorePickups }) {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
               <button
-                onClick={onStartScan}
+                onClick={onGetStarted}
                 className="w-full sm:w-auto px-7 py-3.5 rounded-2xl font-bold text-base text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-lg shadow-emerald-600/30 hover:shadow-xl hover:shadow-emerald-600/40 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Sparkles className="w-5 h-5 text-emerald-200" />
-                Scan Waste with AI Now
+                Get Started with Indohood
                 <ArrowRight className="w-4 h-4" />
               </button>
 
               <button
-                onClick={onExplorePickups}
+                onClick={onExploreHowItWorks}
                 className="w-full sm:w-auto px-6 py-3.5 rounded-2xl font-bold text-base text-stone-800 bg-white hover:bg-stone-50 border border-stone-200 shadow-sm hover:border-emerald-300 hover:text-emerald-700 transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                <Calendar className="w-5 h-5 text-teal-600" />
-                Schedule a Pickup
+                How It Works
               </button>
             </div>
 

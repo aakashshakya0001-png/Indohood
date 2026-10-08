@@ -38,13 +38,8 @@ export default function Footer({ onNavigate }) {
             </h4>
             <ul className="space-y-2.5 text-sm">
               <li>
-                <button onClick={() => onNavigate('scanner')} className="hover:text-emerald-400 transition-colors cursor-pointer">
-                  AI Waste Scanner
-                </button>
-              </li>
-              <li>
-                <button onClick={() => onNavigate('pickups')} className="hover:text-emerald-400 transition-colors cursor-pointer">
-                  Schedule Pickup
+                <button onClick={() => onNavigate('how-it-works')} className="hover:text-emerald-400 transition-colors cursor-pointer">
+                  How It Works
                 </button>
               </li>
               <li>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Camera, Calendar, CheckCircle2, TrendingUp, Sparkles, ArrowRight } from 'lucide-react';
 
-export default function HowItWorks({ onStartScan, onSchedulePickup }) {
+export default function HowItWorks({ onGetStarted, onExploreStore }) {
   const steps = [
     {
       step: '01',
@@ -113,16 +113,16 @@ export default function HowItWorks({ onStartScan, onSchedulePickup }) {
           </div>
           <div className="flex items-center gap-3">
             <button
-              onClick={onStartScan}
+              onClick={onGetStarted}
               className="px-5 py-2.5 rounded-xl font-bold text-xs text-stone-900 bg-emerald-400 hover:bg-emerald-300 transition-all cursor-pointer shadow-md active:scale-95"
             >
-              Launch AI Scanner
+              Join Indohood Now
             </button>
             <button
-              onClick={onSchedulePickup}
+              onClick={onExploreStore}
               className="px-5 py-2.5 rounded-xl font-bold text-xs text-white bg-white/10 hover:bg-white/20 border border-white/20 transition-all cursor-pointer"
             >
-              View Pickups
+              Explore Green Store
             </button>
           </div>
         </div>
