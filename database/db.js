@@ -66,6 +66,18 @@ export const db = {
   // Users
   getUsers: () => users,
   getUserById: (id) => users.find(u => u.id === id),
+  getUserByEmail: (email) => users.find(u => (u.email || '').toLowerCase() === (email || '').toLowerCase()),
+  addUser: (userData) => {
+    const newUser = {
+      id: userData.id || `usr_${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      walletBalance: 0,
+      ...userData
+    };
+    users = [newUser, ...users];
+    persist('users', users);
+    return newUser;
+  },
   updateUser: (id, updates) => {
     const idx = users.findIndex(u => u.id === id);
     if (idx !== -1) {

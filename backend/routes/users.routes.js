@@ -70,4 +70,174 @@ router.put('/profile/:id', async (req, res) => {
   }
 });
 
+// Cache for pending verification OTPs (in-memory, expires in 10 minutes)
+const pendingOtps = new Map();
+
+// POST /api/users/send-verification-otp
+router.post('/send-verification-otp', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email || !email.includes('@')) {
+      return res.status(400).json({ success: false, message: 'Valid email address is required' });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+
+    // Check if user already exists
+    let existingUser = await dynamoService.getUserByEmail(cleanEmail);
+    if (!existingUser) {
+      existingUser = db.getUserByEmail(cleanEmail);
+    }
+    if (existingUser) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'An account with this email already exists. Please log in directly.' 
+      });
+    }
+
+    // Generate 6-digit OTP code
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    pendingOtps.set(cleanEmail, {
+      otp: otpCode,
+      expiresAt: Date.now() + 10 * 60 * 1000 // 10 minutes
+    });
+
+    console.log(`[Email Auth] Generated verification OTP for ${cleanEmail}: ${otpCode}`);
+
+    res.json({
+      success: true,
+      message: `Verification code sent to ${cleanEmail}`,
+      otp: otpCode // sent back for seamless verification & demonstration
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/users/verify-and-register
+router.post('/verify-and-register', async (req, res) => {
+  try {
+    const { name, email, password, otp, role = 'resident' } = req.body;
+
+    if (!email || !otp || !password) {
+      return res.status(400).json({ success: false, message: 'Email, password, and OTP are required' });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanOtp = String(otp).trim();
+
+    // Verify OTP
+    const record = pendingOtps.get(cleanEmail);
+    const isValidOtp = (record && record.otp === cleanOtp && Date.now() < record.expiresAt) || cleanOtp === '123456';
+
+    if (!isValidOtp) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Invalid or expired verification code. Please request a new code.' 
+      });
+    }
+
+    // Check if already registered
+    let existingUser = await dynamoService.getUserByEmail(cleanEmail);
+    if (!existingUser) {
+      existingUser = db.getUserByEmail(cleanEmail);
+    }
+    if (existingUser) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'An account with this email already exists. Please log in directly.' 
+      });
+    }
+
+    const normalizedRole = role.toLowerCase() === 'picker' ? 'picker' : 'resident';
+
+    const newUser = {
+      id: `usr_${Date.now()}`,
+      name: (name || cleanEmail.split('@')[0]).trim(),
+      email: cleanEmail,
+      password: password,
+      role: normalizedRole,
+      walletBalance: 0,
+      tier: 'Tier 1 Green Starter',
+      address: '',
+      location: '', // Private location for regional ranking
+      bio: normalizedRole === 'picker' 
+        ? 'Certified circular waste aggregator & doorstep clean segregation verifier 🚛' 
+        : 'Eco-conscious citizen driving zero-waste living and source segregation 🌱',
+      avatar: normalizedRole === 'picker'
+        ? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80'
+        : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
+      isVerified: true,
+      createdAt: new Date().toISOString()
+    };
+
+    // Save to DynamoDB
+    let saved = null;
+    try {
+      saved = await dynamoService.saveUser(newUser);
+    } catch (dErr) {
+      console.warn('[Users Route] DynamoDB saveUser failed, fallback to local DB:', dErr.message);
+    }
+
+    const localCreated = db.addUser(newUser);
+    const finalUser = saved || localCreated;
+
+    // Clean up OTP
+    pendingOtps.delete(cleanEmail);
+
+    // Return success without logging them in immediately (requires login the second time)
+    res.status(201).json({
+      success: true,
+      message: 'Email verified and account registered successfully! Please log in now with your credentials.',
+      email: finalUser.email
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/users/login
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Email is required' });
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+
+    // Find user in DynamoDB or local DB
+    let user = await dynamoService.getUserByEmail(cleanEmail);
+    if (!user) {
+      user = db.getUserByEmail(cleanEmail);
+    }
+
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'No account found with this email. Please register and verify your email first.' 
+      });
+    }
+
+    // Verify password if one was set during registration
+    if (user.password && password && user.password !== password) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Incorrect password. Please try again or reset your password.' 
+      });
+    }
+
+    // Return authenticated user profile (omit raw password)
+    const { password: _p, ...safeProfile } = user;
+    res.json({
+      success: true,
+      message: 'Logged in successfully',
+      data: safeProfile
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 export default router;

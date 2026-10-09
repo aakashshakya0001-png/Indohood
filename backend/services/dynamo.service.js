@@ -45,6 +45,18 @@ export const dynamoService = {
     }
   },
 
+  async getUserByEmail(email) {
+    try {
+      if (!email) return null;
+      const target = email.trim().toLowerCase();
+      const users = await this.getUsers();
+      return users.find(u => (u.email || '').toLowerCase() === target) || null;
+    } catch (err) {
+      console.error(`[DynamoDB getUserByEmail ${email} error]:`, err.message);
+      return null;
+    }
+  },
+
   async saveUser(user) {
     try {
       await docClient.send(new PutCommand({
