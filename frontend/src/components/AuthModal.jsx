@@ -435,15 +435,6 @@ export default function AuthModal({ isOpen, initialMode, onClose, onLoginSuccess
           <form onSubmit={handleInitiateRegistration} className="flex-1 p-6 sm:p-7 flex flex-col justify-between overflow-y-auto">
             <div className="space-y-3.5">
               
-              {/* Resident Citizen Registration Badge */}
-              <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-emerald-50/80 border border-emerald-200/70 text-emerald-900 text-xs font-medium">
-                <span className="text-lg shrink-0">🌱</span>
-                <div>
-                  <span className="font-bold block text-emerald-950">Resident Citizen Account</span>
-                  <span className="text-[11px] text-emerald-800/90 leading-tight block">Join your neighborhood zero-waste community, scan waste, & earn Eco-Credits.</span>
-                </div>
-              </div>
-
               {/* Full Name */}
               <div>
                 <label className="block text-xs font-bold text-stone-700 mb-1">Full Name</label>
