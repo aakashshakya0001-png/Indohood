@@ -430,7 +430,7 @@ export default function ResidentDashboard({
   // Keep profile state synced with user prop
   useEffect(() => {
     if (user?.name) setProfileName(user.name);
-    if (user?.avatar) setProfileImage(user.avatar);
+    if (user?.avatar !== undefined) setProfileImage(user.avatar);
     if (user?.bio) setProfileBio(user.bio);
     if (user?.location !== undefined) setProfileLocation(user.location);
   }, [user]);
@@ -579,8 +579,35 @@ export default function ResidentDashboard({
   const handleAvatarFile = (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      const url = URL.createObjectURL(file);
-      setAvatarPreview(url);
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxDim = 400;
+          let width = img.width;
+          let height = img.height;
+          if (width > height) {
+            if (width > maxDim) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            }
+          } else {
+            if (height > maxDim) {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          const base64Url = canvas.toDataURL('image/jpeg', 0.85);
+          setAvatarPreview(base64Url);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
     }
   };
 

@@ -58,6 +58,13 @@ export default function Navbar({ user, walletBalance, onOpenAuth, onLogout, onNa
 
               {/* User Profile */}
               <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-stone-100/90 backdrop-blur-xs border border-stone-200 text-stone-700 text-xs font-medium">
+                {user.avatar ? (
+                  <img
+                    src={user.avatar}
+                    alt={user.name}
+                    className="w-5 h-5 rounded-full object-cover border border-emerald-500/50"
+                  />
+                ) : null}
                 <span className="font-semibold text-stone-900">{user.name}</span>
                 <span className="text-emerald-800 font-bold text-[10px] bg-emerald-100/80 px-2 py-0.5 rounded-full">🌱 Resident</span>
               </div>
