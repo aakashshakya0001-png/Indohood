@@ -460,6 +460,19 @@ export default function ResidentDashboard({
   const [cheeredMap, setCheeredMap] = useState({});
   const [activeArticleModal, setActiveArticleModal] = useState(null);
 
+  // Real registered users in platform database for regional leaderboard ranking
+  const [areaUsersList, setAreaUsersList] = useState([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    api.getUsers().then((resUsers) => {
+      if (isMounted && Array.isArray(resUsers)) {
+        setAreaUsersList(resUsers);
+      }
+    });
+    return () => { isMounted = false; };
+  }, []);
+
   // Logo Click Handler: Redirects user directly to Explore page and scrolls to top
   const handleLogoClick = () => {
     setActiveTab('explore');
@@ -1115,32 +1128,77 @@ export default function ResidentDashboard({
   // 3. Tree Equivalent (Tree-Years) - ICFRE standard: 21.77 kg CO2 / tree-year for mature native Indian trees (Neem/Peepal)
   const treesEq = ((impactStats?.co2PreventedGrams || 0) / 21770).toFixed(2);
 
-  // 4. Real-Time Society / Area Rank Leaderboard
-  // Representative active resident peers in the community (e.g. Green Valley Society, New Delhi)
-  const SOCIETY_LEADERBOARD_MEMBERS = [
-    { id: 'res_1', name: 'Rohan Gupta', flat: 'Flat 102', credits: 260, co2Kg: 16.5, landfillKg: 22.0 },
-    { id: 'res_2', name: 'Sanya Malhotra', flat: 'Flat 304', credits: 200, co2Kg: 12.0, landfillKg: 17.5 },
-    { id: 'res_3', name: 'Amit Verma', flat: 'Flat 501', credits: 150, co2Kg: 8.5, landfillKg: 13.0 },
-    { id: 'res_4', name: 'Kavita Iyer', flat: 'Flat 203', credits: 95, co2Kg: 3.5, landfillKg: 5.5 },
-    { id: 'res_5', name: 'Deepak Joshi', flat: 'Flat 602', credits: 70, co2Kg: 2.8, landfillKg: 4.2 },
-    { id: 'res_6', name: 'Pooja Chawla', flat: 'Flat 405', credits: 40, co2Kg: 1.5, landfillKg: 2.5 },
+  // 4. Real-Time Activity Verification:
+  // Check if the user has performed ANY real activities on the platform yet
+  const completedPickupsCount = (pickups || []).filter((p) => p.status === 'COMPLETED').length;
+  const scheduledPickupsCount = (pickups || []).filter((p) => p.status === 'SCHEDULED').length;
+  const itemsSegregatedCount = impactStats?.itemsSegregated || 0;
+  const co2PreventedGrams = impactStats?.co2PreventedGrams || 0;
+  const currentWallet = walletBalance || 0;
+
+  const hasUserActivity = currentWallet > 0 || completedPickupsCount > 0 || scheduledPickupsCount > 0 || itemsSegregatedCount > 0 || co2PreventedGrams > 0;
+
+  // 5. Area / Location Identification
+  const rawLocation = (user?.location || profileLocation || '').trim();
+  const areaDisplayName = rawLocation 
+    ? rawLocation.split(',')[0].trim() 
+    : 'Area';
+
+  // Benchmark community residents across major Indian cities for competitive ranking
+  const REGIONAL_AREA_BENCHMARKS = [
+    { id: 'b_delhi_1', name: 'Rohan Gupta', city: 'New Delhi', score: 380 },
+    { id: 'b_delhi_2', name: 'Sanya Malhotra', city: 'New Delhi', score: 290 },
+    { id: 'b_delhi_3', name: 'Amit Verma', city: 'New Delhi', score: 210 },
+    { id: 'b_blr_1', name: 'Kavita Iyer', city: 'Bengaluru', score: 340 },
+    { id: 'b_blr_2', name: 'Pranav Rao', city: 'Bengaluru', score: 220 },
+    { id: 'b_pune_1', name: 'Deepak Joshi', city: 'Pune', score: 190 },
+    { id: 'b_pune_2', name: 'Neha Kulkarni', city: 'Pune', score: 140 },
+    { id: 'b_mum_1', name: 'Pooja Chawla', city: 'Mumbai', score: 270 },
+    { id: 'b_mum_2', name: 'Aditya Mehta', city: 'Mumbai', score: 180 },
   ];
 
   // Current user's composite civic impact score: Credits + (CO2 kg * 10) + (Landfill kg * 5)
-  const currentUserScore = (walletBalance || 0) + (parseFloat(co2Kg) * 10) + (parseFloat(landfillKg) * 5);
+  const currentUserScore = hasUserActivity
+    ? (currentWallet + (parseFloat(co2Kg) * 10) + (parseFloat(landfillKg) * 5))
+    : 0;
 
-  // Calculate dynamic rank: how many peers currently hold a higher composite score
-  const peersAhead = SOCIETY_LEADERBOARD_MEMBERS.filter((m) => {
-    const peerScore = m.credits + (m.co2Kg * 10) + (m.landfillKg * 5);
-    return peerScore > currentUserScore;
-  }).length;
-  const societyRank = peersAhead + 1;
+  // Calculate dynamic rank: compare strictly with active peers in the user's area
+  let areaRank = null;
+  let totalRankedInArea = 0;
+
+  if (hasUserActivity) {
+    const rawLocLower = rawLocation.toLowerCase();
+
+    // Check database users in the same area who have active score
+    let areaPeers = areaUsersList.filter((peer) => {
+      if (peer.id === user?.id) return false;
+      const peerLoc = (peer.location || '').toLowerCase();
+      const isSameArea = !rawLocLower || (peerLoc && (peerLoc.includes(rawLocLower) || rawLocLower.includes(peerLoc)));
+      const peerScore = peer.walletBalance || 0;
+      return isSameArea && peerScore > 0;
+    }).map((peer) => ({
+      id: peer.id,
+      score: peer.walletBalance || 0,
+    }));
+
+    // If few or no database peers in this city yet, use benchmark active residents in that city
+    if (areaPeers.length === 0) {
+      const matched = REGIONAL_AREA_BENCHMARKS.filter(b => 
+        !rawLocLower || b.city.toLowerCase().includes(rawLocLower) || rawLocLower.includes(b.city.toLowerCase())
+      );
+      areaPeers = (matched.length > 0 ? matched : REGIONAL_AREA_BENCHMARKS);
+    }
+
+    // Dynamic rank: count how many active peers hold a higher score than current user
+    const peersAhead = areaPeers.filter(p => p.score > currentUserScore).length;
+    areaRank = peersAhead + 1;
+    totalRankedInArea = areaPeers.length + 1;
+  }
 
   // Real-time zero-contamination accuracy score based on verified clean source segregation
-  const completedPickupsCount = (pickups || []).filter((p) => p.status === 'COMPLETED').length;
   const zeroContaminationScore = completedPickupsCount > 0
     ? Math.min(99.9, 98.4 + (completedPickupsCount * 0.3)).toFixed(1)
-    : '100.0';
+    : '98.5';
 
   const filteredDiyIdeas = diyCategory === 'all'
     ? DIY_HOME_IDEAS
@@ -2376,11 +2434,23 @@ export default function ResidentDashboard({
               </div>
 
               <div className="p-5 rounded-3xl bg-white border border-stone-200 shadow-2xs space-y-1.5">
-                <span className="text-[11px] font-bold text-stone-400 uppercase tracking-wider">Society Rank</span>
+                <span className="text-[11px] font-bold text-stone-400 uppercase tracking-wider">Area Rank</span>
                 <p className="text-2xl sm:text-3xl font-black text-stone-900">
-                  #{societyRank} <span className="text-sm font-bold text-stone-500">in Society</span>
+                  {hasUserActivity ? (
+                    <>
+                      #{areaRank} <span className="text-sm font-bold text-stone-500">in {areaDisplayName}</span>
+                    </>
+                  ) : (
+                    <>
+                      — <span className="text-sm font-bold text-stone-400">in {areaDisplayName}</span>
+                    </>
+                  )}
                 </p>
-                <p className="text-[11px] text-stone-500">{zeroContaminationScore}% Zero-contamination score</p>
+                <p className="text-[11px] text-stone-500">
+                  {hasUserActivity
+                    ? `${zeroContaminationScore}% Clean segregation score`
+                    : 'No activity yet • Complete 1st pickup to rank'}
+                </p>
               </div>
             </div>
           </div>

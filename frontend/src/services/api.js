@@ -72,6 +72,17 @@ export const api = {
   },
 
   // Users
+  getUsers: async () => {
+    try {
+      const res = await fetch(`${API_BASE}/users`);
+      const data = await res.json();
+      return data.success ? data.data : [];
+    } catch (err) {
+      console.warn('[API Client] Error fetching users list:', err.message);
+      return [];
+    }
+  },
+
   getUserProfile: async (userId = 'usr_resident_01') => {
     try {
       const res = await fetch(`${API_BASE}/users/profile/${userId}`);
