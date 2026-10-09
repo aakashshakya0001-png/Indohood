@@ -112,6 +112,19 @@ export default function App() {
     }
   };
 
+  // Detect Password Reset URL token from inbound email
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('resetToken')) {
+        setAuthModalMode('forgot');
+        setAuthModalOpen(true);
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, []);
+
   // Auth Handlers
   const handleOpenAuth = (mode) => {
     setAuthModalMode(mode);

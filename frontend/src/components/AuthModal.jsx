@@ -19,6 +19,27 @@ export default function AuthModal({ isOpen, initialMode, onClose, onLoginSuccess
   
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotSuccess, setForgotSuccess] = useState(false);
+  const [resetCode, setResetCode] = useState('');
+  const [resetToken, setResetToken] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [resetCompleted, setResetCompleted] = useState(false);
+
+  // Check URL parameters for reset link
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get('resetToken');
+      const emailParam = params.get('email');
+      if (token) {
+        setResetToken(token);
+        if (emailParam) setForgotEmail(emailParam);
+        setMode('forgot');
+        setForgotSuccess(true);
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, []);
 
   useEffect(() => {
     if (initialMode) {
@@ -137,9 +158,59 @@ export default function AuthModal({ isOpen, initialMode, onClose, onLoginSuccess
     }
   };
 
-  const handleForgotSubmit = (e) => {
+  const handleForgotSubmit = async (e) => {
     e.preventDefault();
-    setForgotSuccess(true);
+    setErrorMessage('');
+    setLoading(true);
+
+    try {
+      const res = await api.forgotPassword(forgotEmail);
+      if (res && res.success) {
+        setForgotSuccess(true);
+        if (res.resetToken) setResetToken(res.resetToken);
+        setSuccessNotice('Reset email sent! Check your Gmail inbox.');
+      } else {
+        setErrorMessage(res?.message || 'Failed to send reset email. Please verify your email.');
+      }
+    } catch (err) {
+      setErrorMessage(err.message || 'Error sending password reset email');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetPasswordSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMessage('');
+    setLoading(true);
+
+    try {
+      const res = await api.resetPassword({
+        email: forgotEmail,
+        code: resetCode,
+        token: resetToken,
+        newPassword
+      });
+
+      if (res && res.success) {
+        setResetCompleted(true);
+        setSuccessNotice('Password reset successfully! Redirecting to login...');
+        setTimeout(() => {
+          switchMode('login');
+          setEmail(forgotEmail);
+          setForgotSuccess(false);
+          setResetCompleted(false);
+          setResetCode('');
+          setNewPassword('');
+        }, 1800);
+      } else {
+        setErrorMessage(res?.message || 'Invalid reset code. Please check your code and try again.');
+      }
+    } catch (err) {
+      setErrorMessage(err.message || 'Error updating password');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -250,10 +321,16 @@ export default function AuthModal({ isOpen, initialMode, onClose, onLoginSuccess
         {mode === 'forgot' ? (
           <div className="flex-1 p-6 sm:p-7 flex flex-col justify-between overflow-y-auto">
             {!forgotSuccess ? (
-              <form onSubmit={handleForgotSubmit} className="space-y-4">
-                <p className="text-xs text-stone-600 leading-relaxed">
-                  Enter the email address linked to your IndoHood account. We will send you a secure verification link to reset your password.
-                </p>
+              <form onSubmit={handleForgotSubmit} className="space-y-4 my-auto">
+                <div className="w-12 h-12 mx-auto rounded-2xl bg-emerald-100 flex items-center justify-center text-emerald-700 shadow-xs">
+                  <KeyRound className="w-6 h-6" />
+                </div>
+                <div className="text-center">
+                  <h4 className="text-base font-bold text-stone-900">Forgot Password</h4>
+                  <p className="text-xs text-stone-600 mt-1">
+                    Enter your registered email address. We will send a secure password reset link and 6-digit verification code to your inbox.
+                  </p>
+                </div>
 
                 <div>
                   <label className="block text-xs font-bold text-stone-700 mb-1">Email Address</label>
@@ -272,35 +349,90 @@ export default function AuthModal({ isOpen, initialMode, onClose, onLoginSuccess
 
                 <button
                   type="submit"
-                  className="w-full py-3 px-4 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-md shadow-emerald-600/25 transition-all cursor-pointer hover:shadow-lg active:scale-98"
+                  disabled={loading || !forgotEmail}
+                  className="w-full py-3 px-4 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-md shadow-emerald-600/25 transition-all cursor-pointer hover:shadow-lg active:scale-98 disabled:opacity-50 flex items-center justify-center gap-2"
                 >
-                  Send Reset Link
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />}
+                  Send Reset Link & Code
                 </button>
               </form>
-            ) : (
+            ) : resetCompleted ? (
               <div className="space-y-4 text-center my-auto py-2">
                 <div className="w-12 h-12 mx-auto rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
                   <CheckCircle2 className="w-7 h-7" />
                 </div>
                 <div>
+                  <h4 className="text-base font-bold text-stone-900">Password Reset Complete</h4>
+                  <p className="text-xs text-stone-600 mt-1">Your password has been securely updated. Redirecting to login...</p>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleResetPasswordSubmit} className="space-y-3.5 my-auto">
+                <div className="text-center">
+                  <div className="w-10 h-10 mx-auto rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 mb-2">
+                    <Mail className="w-5 h-5" />
+                  </div>
                   <h4 className="text-base font-bold text-stone-900">Check Your Email</h4>
-                  <p className="text-xs text-stone-600 mt-1">We sent a password reset link to:</p>
+                  <p className="text-xs text-stone-600 mt-0.5">We sent instructions and a reset code to:</p>
                   <p className="text-xs font-bold text-emerald-800 mt-0.5">{forgotEmail || 'your email'}</p>
                 </div>
-                <p className="text-[11px] text-stone-500">
-                  Didn't receive the email? Check your spam folder or try again.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setForgotSuccess(false);
-                    switchMode('login');
-                  }}
-                  className="w-full py-2.5 px-4 rounded-xl font-bold text-xs text-stone-700 bg-stone-100 hover:bg-stone-200 transition-colors cursor-pointer"
-                >
-                  Return to Login
-                </button>
-              </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-stone-700 mb-1">
+                    6-Digit Reset Code (From Email)
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    maxLength={6}
+                    value={resetCode}
+                    onChange={(e) => setResetCode(e.target.value.replace(/\D/g, ''))}
+                    placeholder="Enter 6-digit code"
+                    className="w-full text-center tracking-widest font-mono text-base py-2.5 px-3.5 rounded-xl border border-stone-200 focus:outline-hidden focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all font-bold text-stone-800"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-stone-700 mb-1">
+                    New Password
+                  </label>
+                  <div className="relative">
+                    <Lock className="w-4 h-4 text-stone-400 absolute left-3.5 top-3" />
+                    <input
+                      type="password"
+                      required
+                      minLength={6}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="At least 6 characters"
+                      className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-stone-200 focus:outline-hidden focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 text-sm transition-all"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-1 space-y-2">
+                  <button
+                    type="submit"
+                    disabled={loading || (!resetCode && !resetToken) || newPassword.length < 6}
+                    className="w-full py-3 px-4 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-md shadow-emerald-600/25 transition-all cursor-pointer hover:shadow-lg active:scale-98 disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
+                    Save New Password
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setForgotSuccess(false);
+                      setResetCode('');
+                      setNewPassword('');
+                    }}
+                    className="w-full py-2 text-xs font-bold text-stone-500 hover:text-stone-800 transition-colors cursor-pointer text-center"
+                  >
+                    Resend code or change email
+                  </button>
+                </div>
+              </form>
             )}
 
             <div className="pt-2 text-center text-xs text-stone-500">
