@@ -5,7 +5,7 @@ import {
   Plus, X, AlertTriangle, ArrowUpRight, Leaf, History,
   Award, Download, Printer, BookOpen, Lightbulb, Share2, Recycle,
   Check, ChevronRight, Droplets, Flame, Tag, DollarSign, Filter,
-  ExternalLink, Layers, Sparkle, Info, Compass, PlusSquare, User, Bell, Edit3,
+  ExternalLink, Layers, Sparkle, Info, Compass, PlusSquare, User, Bell, Edit3, LogOut,
   Grid3X3, Bookmark, Medal, Zap, Trophy, Activity, Heart, MessageSquare, Send, ThumbsUp,
   Image as ImageIcon
 } from 'lucide-react';
@@ -1151,28 +1151,40 @@ export default function ResidentDashboard({
           />
           <h2 className="text-lg font-black text-stone-900 tracking-tight leading-none">IndoHood</h2>
         </div>
-        {/* Notification Button */}
-        <button
-          onClick={() => setActiveTab('notification')}
-          aria-label="Notifications"
-          className={`relative p-2 rounded-2xl transition-all cursor-pointer active:scale-95 ${
-            activeTab === 'notification'
-              ? 'bg-emerald-100 text-emerald-800 shadow-xs'
-              : 'text-stone-700 hover:text-stone-900 hover:bg-stone-100 bg-stone-100/70 border border-stone-200/80'
-          }`}
-        >
-          <Bell className="w-5 h-5" />
-          {notifications.some((n) => n.unread) && (
-            <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-white animate-pulse"></span>
-          )}
-        </button>
+        <div className="flex items-center gap-2">
+          {/* Notification Button */}
+          <button
+            onClick={() => setActiveTab('notification')}
+            aria-label="Notifications"
+            className={`relative p-2 rounded-2xl transition-all cursor-pointer active:scale-95 ${
+              activeTab === 'notification'
+                ? 'bg-emerald-100 text-emerald-800 shadow-xs'
+                : 'text-stone-700 hover:text-stone-900 hover:bg-stone-100 bg-stone-100/70 border border-stone-200/80'
+            }`}
+          >
+            <Bell className="w-5 h-5" />
+            {notifications.some((n) => n.unread) && (
+              <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-white animate-pulse"></span>
+            )}
+          </button>
+
+          {/* Mobile Log Out Button */}
+          <button
+            onClick={onLogout}
+            aria-label="Log Out"
+            title="Log out to landing page"
+            className="p-2 rounded-2xl text-stone-500 hover:text-rose-600 hover:bg-rose-50 bg-stone-100/70 border border-stone-200/80 transition-all cursor-pointer active:scale-95"
+          >
+            <LogOut className="w-5 h-5" />
+          </button>
+        </div>
       </header>
 
       {/* ============================================================ */}
       {/* DESKTOP PERMANENT LEFT SIDEBAR NAVIGATION                    */}
       {/* Completely transparent sidebar with hover-revealed icon names*/}
       {/* ============================================================ */}
-      <aside className="hidden md:block w-52 lg:w-56 bg-transparent border-r border-stone-200/40 h-screen sticky top-0 px-4 lg:px-5 py-8 shrink-0 z-30 select-none">
+      <aside className="hidden md:flex flex-col justify-between w-52 lg:w-56 bg-transparent border-r border-stone-200/40 h-screen sticky top-0 px-4 lg:px-5 py-8 shrink-0 z-30 select-none">
         <div className="space-y-8">
           {/* Brand Header with Official Logo - clicking logo redirects to explore page */}
           <div 
@@ -1240,6 +1252,20 @@ export default function ResidentDashboard({
               </span>
             </button>
           </nav>
+        </div>
+
+        {/* 5. Log Out Button in Left Side Menu Bar */}
+        <div className="pt-4 border-t border-stone-200/50 mt-auto">
+          <button
+            onClick={onLogout}
+            className="w-full flex items-center gap-3.5 px-3 py-3 rounded-2xl transition-all cursor-pointer text-left group bg-transparent hover:bg-rose-50"
+            title="Log out and return to landing page"
+          >
+            <LogOut className="w-6 h-6 shrink-0 text-stone-500 group-hover:text-rose-600 stroke-[1.8] transition-colors" />
+            <span className="text-base font-bold tracking-tight opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-200 whitespace-nowrap text-stone-700 group-hover:text-rose-600">
+              Log Out
+            </span>
+          </button>
         </div>
       </aside>
 
