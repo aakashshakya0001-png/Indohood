@@ -2740,9 +2740,8 @@ export default function ResidentDashboard({
               >
                 <X className="w-5 h-5" />
               </button>
-              <div className="flex items-center gap-2 mb-1">
-                <Calendar className="w-5 h-5 text-teal-300" />
-                <h3 className="text-xl font-black tracking-tight">Schedule Doorstep Scrap Handover</h3>
+              <div className="mb-1">
+                <h3 className="text-xl font-black tracking-tight">Schedule Handover</h3>
               </div>
               <p className="text-xs text-teal-100">Item: {scanResult.name} • Category: {scanResult.category} • Reward: +{scanResult.creditsAwarded} Eco-Credits</p>
             </div>
@@ -2772,7 +2771,7 @@ export default function ResidentDashboard({
                         : 'border-stone-200 text-stone-600 hover:bg-stone-50'
                     }`}
                   >
-                    🌅 Morning (9-12)
+                    Morning (9-12)
                   </button>
                   <button
                     type="button"
@@ -2783,7 +2782,7 @@ export default function ResidentDashboard({
                         : 'border-stone-200 text-stone-600 hover:bg-stone-50'
                     }`}
                   >
-                    ☀️ Afternoon (2-5)
+                    Afternoon (2-5)
                   </button>
                 </div>
               </div>
@@ -2811,10 +2810,9 @@ export default function ResidentDashboard({
 
               <button
                 type="submit"
-                className="w-full py-3.5 px-4 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-98"
+                className="w-full py-3.5 px-4 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 shadow-md transition-all cursor-pointer flex items-center justify-center active:scale-98"
               >
-                <Truck className="w-4 h-4" />
-                Confirm Doorstep Pickup & Handover
+                Confirm
               </button>
             </form>
           </div>
