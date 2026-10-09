@@ -403,7 +403,22 @@ export default function ResidentDashboard({
   onLogout,
   onUpdateUser
 }) {
-  const [activeTab, setActiveTab] = useState('explore'); // 'explore' -> 'upload' -> 'notification' -> 'profile'
+  const [activeTab, setActiveTab] = useState(() => {
+    try {
+      return localStorage.getItem('indohood_active_tab') || 'explore';
+    } catch {
+      return 'explore';
+    }
+  });
+
+  // Sync activeTab to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('indohood_active_tab', activeTab);
+    } catch (e) {
+      console.warn('Failed to save activeTab:', e);
+    }
+  }, [activeTab]);
 
   // Profile Customization State (Edit Profile: Bio, Avatar, Name)
   const [profileName, setProfileName] = useState(user?.name || 'Resident Citizen');
@@ -411,13 +426,44 @@ export default function ResidentDashboard({
   const [profileBio, setProfileBio] = useState(user?.bio || 'Eco-conscious citizen driving zero-waste living and source segregation 🌱');
   const [profileSubTab, setProfileSubTab] = useState('activity'); // 'activity' | 'certificate'
 
+  // Keep profile state synced with user prop
+  useEffect(() => {
+    if (user?.name) setProfileName(user.name);
+    if (user?.avatar) setProfileImage(user.avatar);
+    if (user?.bio) setProfileBio(user.bio);
+  }, [user]);
+
   // Explore Tab State (Sub-tabs: Activity & Articles)
   const [exploreSubTab, setExploreSubTab] = useState('activity'); // 'activity' | 'articles'
   const [activityCategoryFilter, setActivityCategoryFilter] = useState('All');
   const [articleTopicFilter, setArticleTopicFilter] = useState('All');
-  const [communityActivitiesList, setCommunityActivitiesList] = useState(COMMUNITY_ACTIVITIES);
+  const [communityActivitiesList, setCommunityActivitiesList] = useState(() => {
+    try {
+      const saved = localStorage.getItem('indohood_activities');
+      return saved ? JSON.parse(saved) : COMMUNITY_ACTIVITIES;
+    } catch {
+      return COMMUNITY_ACTIVITIES;
+    }
+  });
+
+  // Sync activities to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('indohood_activities', JSON.stringify(communityActivitiesList));
+    } catch (e) {
+      console.warn('Failed to save activities:', e);
+    }
+  }, [communityActivitiesList]);
+
   const [cheeredMap, setCheeredMap] = useState({});
   const [activeArticleModal, setActiveArticleModal] = useState(null);
+
+  // Logo Click Handler: Redirects user directly to Explore page and scrolls to top
+  const handleLogoClick = () => {
+    setActiveTab('explore');
+    setExploreSubTab('activity');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleToggleCheer = (actId) => {
     setCheeredMap(prev => ({
@@ -549,7 +595,24 @@ export default function ResidentDashboard({
   };
   
   // Notification State
-  const [notifications, setNotifications] = useState(DEFAULT_NOTIFICATIONS);
+  const [notifications, setNotifications] = useState(() => {
+    try {
+      const saved = localStorage.getItem('indohood_notifications');
+      return saved ? JSON.parse(saved) : DEFAULT_NOTIFICATIONS;
+    } catch {
+      return DEFAULT_NOTIFICATIONS;
+    }
+  });
+
+  // Sync notifications to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('indohood_notifications', JSON.stringify(notifications));
+    } catch (e) {
+      console.warn('Failed to save notifications:', e);
+    }
+  }, [notifications]);
+
   const [notifFilter, setNotifFilter] = useState('all');
 
   const handleMarkAllRead = () => {
@@ -1075,7 +1138,12 @@ export default function ResidentDashboard({
       
       {/* MOBILE TOP BAR (Only visible on phone screen) */}
       <header className="md:hidden flex items-center justify-between px-4 py-3 bg-white/90 backdrop-blur-md border-b border-stone-200/60 sticky top-0 z-30">
-        <div className="flex items-center gap-2.5">
+        <div 
+          onClick={handleLogoClick}
+          className="flex items-center gap-2.5 cursor-pointer active:scale-95 transition-transform"
+          role="button"
+          title="Go to Explore"
+        >
           <img
             src="/logo.png"
             alt="IndoHood Logo"
@@ -1106,8 +1174,13 @@ export default function ResidentDashboard({
       {/* ============================================================ */}
       <aside className="hidden md:block w-52 lg:w-56 bg-transparent border-r border-stone-200/40 h-screen sticky top-0 px-4 lg:px-5 py-8 shrink-0 z-30 select-none">
         <div className="space-y-8">
-          {/* Brand Header with Official Logo - only shows logo by default, reveals IndoHood on hover */}
-          <div className="flex items-center gap-3.5 px-3 py-2 cursor-pointer group bg-transparent select-none">
+          {/* Brand Header with Official Logo - clicking logo redirects to explore page */}
+          <div 
+            onClick={handleLogoClick}
+            className="flex items-center gap-3.5 px-3 py-2 cursor-pointer group bg-transparent select-none active:scale-98 transition-transform"
+            role="button"
+            title="Go to Explore"
+          >
             <img
               src="/logo.png"
               alt="IndoHood Logo"

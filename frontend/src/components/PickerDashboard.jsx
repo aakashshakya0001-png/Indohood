@@ -26,7 +26,12 @@ export default function PickerDashboard({ user, pickups, onCompletePickup, onLog
       {/* Picker Header Banner */}
       <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-teal-900 via-stone-900 to-emerald-950 text-white shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-2">
-          <div className="flex items-center gap-2.5">
+          <div 
+            onClick={() => setActiveFilter('pending')}
+            className="flex items-center gap-2.5 cursor-pointer active:scale-95 transition-transform"
+            role="button"
+            title="Pending Collections"
+          >
             <img
               src="/logo.png"
               alt="IndoHood Logo"
