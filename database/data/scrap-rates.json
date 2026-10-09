@@ -1,0 +1,20 @@
+{
+  "lastUpdated": "2026-10-09T09:29:44.578Z",
+  "source": "live_scraped_india",
+  "rates": {
+    "copper_metal": 900,
+    "aluminium_metal": 230,
+    "brass_metal": 700,
+    "iron_steel": 20,
+    "pet_plastic": 16,
+    "hdpe_plastic": 22,
+    "ldpe_plastic": 12,
+    "cardboard_paper": 8,
+    "newspaper": 15,
+    "e_waste": 65,
+    "organic_compost": 5,
+    "medical_pharma": 0,
+    "sanitary_refuse": 0,
+    "hazardous_chemical": 0
+  }
+}

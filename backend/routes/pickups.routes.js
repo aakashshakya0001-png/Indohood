@@ -25,14 +25,24 @@ router.post('/schedule', (req, res) => {
       return res.status(400).json({ success: false, message: 'Missing required pickup fields' });
     }
 
+    let finalStream = 'Non-Degradable';
+    const streamCheck = (stream || streamLabel || '').toLowerCase();
+    if (streamCheck.includes('degradable') && !streamCheck.includes('non')) {
+      finalStream = 'Degradable';
+    } else if (streamCheck.includes('mix') || streamCheck.includes('hazard') || streamCheck.includes('sanitary') || streamCheck.includes('medic')) {
+      finalStream = 'Mix';
+    }
+
+    const defaultCredits = finalStream === 'Degradable' ? 15 : finalStream === 'Mix' ? 5 : 25;
+
     const newPickup = db.addPickup({
       itemId,
       itemName,
       itemIcon: itemIcon || '📦',
-      stream: stream || 'degradable',
-      streamLabel: streamLabel || 'Degradable (Dry Scrap)',
+      stream: finalStream,
+      streamLabel: finalStream,
       weightEst: weightEst || '1.0 kg',
-      credits: Number(credits) || 20,
+      credits: Number(credits) || defaultCredits,
       co2Grams: Number(co2Grams) || 110,
       pickupDate,
       timeSlot: timeSlot || 'Morning (9:00 AM - 12:00 PM)',

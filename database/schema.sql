@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS activities (
     society VARCHAR(128) DEFAULT 'Green Valley Society',
     user_avatar TEXT,
     action_title TEXT NOT NULL,
-    category VARCHAR(64) NOT NULL, -- 'Dry Scrap' | 'Composting' | 'E-Waste' | 'Community Drives' | 'Upcycling DIY'
+    category VARCHAR(64) NOT NULL, -- 'Degradable' | 'Non-Degradable' | 'Mix'
     badge_color VARCHAR(32) DEFAULT 'emerald',
     impact_stat VARCHAR(128) NOT NULL,
     credits_earned INTEGER DEFAULT 25,

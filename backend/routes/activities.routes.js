@@ -21,16 +21,27 @@ router.post('/', (req, res) => {
       return res.status(400).json({ success: false, message: 'Action title is required' });
     }
 
+    let finalCategory = 'Non-Degradable';
+    const catLower = (category || '').toLowerCase();
+    if (catLower.includes('degradable') && !catLower.includes('non')) {
+      finalCategory = 'Degradable';
+    } else if (catLower.includes('mix') || catLower.includes('hazard') || catLower.includes('sanitary') || catLower.includes('medic')) {
+      finalCategory = 'Mix';
+    }
+
+    const defaultCredits = finalCategory === 'Degradable' ? 15 : finalCategory === 'Mix' ? 5 : 25;
+    const badgeColor = finalCategory === 'Degradable' ? 'emerald' : finalCategory === 'Mix' ? 'rose' : 'blue';
+
     const created = db.addActivity({
       userName: userName || 'Resident Citizen',
       userLocation: 'Flat 402, Green Valley Apartments',
       society: 'Green Valley Society',
       userAvatar: userAvatar || null,
       actionTitle,
-      category: category || 'Dry Scrap',
-      badgeColor: 'emerald',
+      category: finalCategory,
+      badgeColor,
       impactStat: impactStat || 'Eco-Action Recorded',
-      creditsEarned: Number(creditsEarned) || 30,
+      creditsEarned: Number(creditsEarned) || defaultCredits,
       image: image || 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=600&auto=format&fit=crop&q=80',
       notes: notes || 'Verified neighborhood waste segregation contribution.',
       verified: true

@@ -57,11 +57,16 @@ app.use((err, req, res, next) => {
   });
 });
 
+import { initScrapScraperDaemon } from './services/scrap-scraper.service.js';
+
 app.listen(PORT, () => {
   console.log(`=================================================`);
   console.log(`🌱 IndoHood Backend running on http://localhost:${PORT}`);
   console.log(`📡 API Health: http://localhost:${PORT}/api/health`);
   console.log(`=================================================`);
+
+  // Initialize automated 24h scrap rate scraper daemon
+  initScrapScraperDaemon();
 });
 
 export default app;

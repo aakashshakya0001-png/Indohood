@@ -1,78 +1,91 @@
 import { BedrockRuntimeClient, ConverseCommand } from '@aws-sdk/client-bedrock-runtime';
+import { calculateDynamicCredits, normalizeCategory, matchMaterialKey } from './scrap-market.service.js';
 
+// Fallback baseline items adhering strictly to Indian 3-stream segregation
 const FALLBACK_TAXONOMY = [
   {
-    keywords: ['bottle', 'pet', 'plastic', 'jar', 'container'],
-    name: 'Plastic PET Bottles & Recyclables',
-    icon: '🥤',
-    category: 'non-degradable',
-    categoryLabel: 'Non-Degradable (Recyclable)',
-    scrapRate: '₹18 / kg (35 Credits)',
-    binColor: 'blue',
-    binName: 'Blue Dry Recyclables Bin',
-    creditsAwarded: 25,
-    co2PreventedGrams: 85,
-    weightGrams: 40,
-    disposalTip: 'Empty residual liquid, crush bottle flat to save collection space, and keep caps together.'
-  },
-  {
-    keywords: ['cardboard', 'box', 'carton', 'paper', 'package', 'amazon'],
-    name: 'Delivery Cardboard Box & Paper Pulp',
-    icon: '📦',
-    category: 'degradable',
-    categoryLabel: 'Degradable (Paper Pulp)',
-    scrapRate: '₹14 / kg (28 Credits)',
-    binColor: 'blue',
-    binName: 'Blue / Dry Paper Pulp Stream',
-    creditsAwarded: 20,
-    co2PreventedGrams: 110,
-    weightGrams: 180,
-    disposalTip: 'Peel off synthetic plastic tape, flatten the box flat, and bundle with jute cord.'
-  },
-  {
-    keywords: ['cable', 'wire', 'charger', 'usb', 'electronic', 'cord', 'copper'],
-    name: 'Discarded Charger & Copper Wires',
-    icon: '🔌',
-    category: 'non-degradable',
-    categoryLabel: 'Non-Degradable (E-Waste / Metal)',
-    scrapRate: '₹45 / kg (90 Credits)',
-    binColor: 'blue',
-    binName: 'Blue Dedicated E-Waste Stream',
-    creditsAwarded: 35,
-    co2PreventedGrams: 320,
-    weightGrams: 90,
-    disposalTip: 'High-purity copper conductors inside! Keep dry and separate for certified smelting recovery.'
-  },
-  {
-    keywords: ['can', 'tin', 'aluminum', 'soda', 'beverage', 'beer'],
-    name: 'Aluminium Beverage Can',
-    icon: '🥫',
-    category: 'non-degradable',
-    categoryLabel: 'Non-Degradable (Metal Scrap)',
-    scrapRate: '₹95 / kg (190 Credits)',
-    binColor: 'blue',
-    binName: 'Blue Dry Recyclables Bin',
-    creditsAwarded: 30,
-    co2PreventedGrams: 410,
-    weightGrams: 15,
-    disposalTip: 'Rinse sweet liquid residue, crush cylindrical body flat, and preserve tab ring.'
-  },
-  {
-    keywords: ['food', 'peel', 'vegetable', 'fruit', 'kitchen', 'waste', 'banana'],
+    keywords: ['peel', 'vegetable', 'fruit', 'kitchen', 'food', 'banana', 'organic', 'wet', 'compost', 'leaf', 'flower', 'tea', 'egg'],
     name: 'Kitchen Vegetable & Fruit Peels',
     icon: '🍌',
-    category: 'degradable',
-    categoryLabel: 'Degradable (Organic Compostable)',
-    scrapRate: '₹0 (100% Soil Compost Value)',
-    binColor: 'green',
-    binName: 'Green Wet Organics Bin',
-    creditsAwarded: 15,
-    co2PreventedGrams: 125,
-    weightGrams: 250,
-    disposalTip: 'Do not mix with plastic wrappers! Add to balcony planter or community aerobic compost pit.'
+    category: 'Degradable',
+    categoryLabel: 'Degradable',
+    binColor: 'emerald',
+    binName: 'Green Bin (Degradable)',
+    defaultWeightGrams: 250,
+    disposalTip: '100% biodegradable wet organics under SWM Rules 2016. Decomposes naturally into rich soil compost.'
+  },
+  {
+    keywords: ['cardboard', 'box', 'carton', 'paper', 'package', 'amazon', 'pulp', 'raddi'],
+    name: 'Biodegradable Cardboard & Pulp Box',
+    icon: '📦',
+    category: 'Degradable',
+    categoryLabel: 'Degradable',
+    binColor: 'emerald',
+    binName: 'Green Bin (Degradable)',
+    defaultWeightGrams: 300,
+    disposalTip: 'Biodegradable paper and cardboard pulp. Keep dry for natural composting or circular pulp processing.'
+  },
+  {
+    keywords: ['bottle', 'pet', 'plastic', 'jar', 'container', 'wrapper', 'polythene'],
+    name: 'Plastic PET Bottles & Recyclables',
+    icon: '🥤',
+    category: 'Non-Degradable',
+    categoryLabel: 'Non-Degradable',
+    binColor: 'blue',
+    binName: 'Blue Bin (Non-Degradable)',
+    defaultWeightGrams: 40,
+    disposalTip: 'Non-biodegradable synthetic polymers under Plastic Waste Rules 2022. Collect clean and dry for circular recycling.'
+  },
+  {
+    keywords: ['cable', 'wire', 'charger', 'usb', 'electronic', 'cord', 'copper', 'e-waste'],
+    name: 'Discarded Charger & Copper Wires',
+    icon: '🔌',
+    category: 'Non-Degradable',
+    categoryLabel: 'Non-Degradable',
+    binColor: 'blue',
+    binName: 'Blue Bin (Non-Degradable)',
+    defaultWeightGrams: 90,
+    disposalTip: 'High-value non-biodegradable e-waste conductors under E-Waste Rules 2022. Keep dry for certified metallic recovery.'
+  },
+  {
+    keywords: ['can', 'tin', 'aluminum', 'soda', 'beverage', 'beer', 'metal', 'loha', 'iron'],
+    name: 'Aluminium Beverage Can & Scrap Metals',
+    icon: '🥫',
+    category: 'Non-Degradable',
+    categoryLabel: 'Non-Degradable',
+    binColor: 'blue',
+    binName: 'Blue Bin (Non-Degradable)',
+    defaultWeightGrams: 50,
+    disposalTip: 'Non-biodegradable metal alloy. Rinse residue and crush flat for clean circular metal recovery.'
+  },
+  {
+    keywords: ['medical', 'medicine', 'tablet', 'blister', 'syrup', 'strip', 'pharma', 'drug', 'bandage', 'pill', 'syringe'],
+    name: 'Medical Blister Packs & Expired Medicine',
+    icon: '💊',
+    category: 'Mix',
+    categoryLabel: 'Mix',
+    binColor: 'rose',
+    binName: 'Red/Black Bin (Mix)',
+    defaultWeightGrams: 35,
+    disposalTip: 'Cannot degrade and cannot be recycled. Hazardous pharmaceutical waste routed to municipal high-temperature incineration.'
+  },
+  {
+    keywords: ['sanitary', 'napkin', 'pad', 'diaper', 'hygiene', 'hazard', 'biohazard', 'soiled'],
+    name: 'Sanitary Napkins & Biohazard Refuse',
+    icon: '🩹',
+    category: 'Mix',
+    categoryLabel: 'Mix',
+    binColor: 'rose',
+    binName: 'Red/Black Bin (Mix)',
+    defaultWeightGrams: 60,
+    disposalTip: 'Non-degradable biohazard sanitary waste. Under Bio-Medical Waste Rules, wrap securely in marked newspaper with a red cross.'
   }
 ];
 
+/**
+ * Classifies an uploaded or camera-captured waste image.
+ * Uses Amazon Bedrock Multimodal Vision when configured, with a smart statutory fallback.
+ */
 export async function classifyWasteImage({ imageBase64, itemHint }) {
   const region = process.env.AWS_REGION || 'us-east-1';
   const modelId = process.env.BEDROCK_MODEL_ID || 'anthropic.claude-3-5-sonnet-20241022-v2:0';
@@ -80,20 +93,35 @@ export async function classifyWasteImage({ imageBase64, itemHint }) {
   if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY && imageBase64) {
     try {
       const client = new BedrockRuntimeClient({ region });
-      const prompt = `You are IndoHood AI, an expert municipal waste segregation engine in India.
-Analyze this item and respond with valid JSON only in this exact structure:
+      const prompt = `You are IndoHood AI, an expert municipal waste segregation engine in India, strictly grounded in:
+1. Solid Waste Management Rules, 2016 (MoEFCC)
+2. Plastic Waste Management Rules, 2016 & 2022
+3. E-Waste (Management) Rules, 2022
+4. Bio-Medical Waste Management Rules, 2016
+
+CRITICAL STATUTORY CATEGORY MANDATE:
+Our platform classifies all items into ONLY 3 categories with strictly these exact words:
+1. "Degradable": All biodegradable wet organics and natural fibers (kitchen vegetable/fruit peels, leftover food, tea grounds, garden leaves, compostable paper/cardboard pulp).
+2. "Non-Degradable": All non-biodegradable recyclable items (plastics, PET bottles, scrap metals, aluminium cans, copper wiring, e-waste, chargers, glass).
+3. "Mix": All items that CANNOT degrade and CANNOT be recycled, classified as hazardous or sanitary waste (medical blister packs, expired tablets/medicines, sanitary napkins, diapers, biohazard soiled waste).
+
+NO OTHER CATEGORY NAMES ARE PERMITTED.
+
+CRITICAL WEIGHT ESTIMATION & CREDIT INTEGRITY:
+To prevent users from gaming the platform by breaking items into smaller pieces:
+- Estimate the realistic visual weight of the item in grams (weightGrams). For example: an empty 500ml PET bottle is ~20g; a 1L bottle is ~35g; a small cardboard box is ~150g; 1kg carton is ~1000g; a tablet strip is ~30g.
+- Do NOT output any raw scrap rupee prices or currency in your response.
+
+Respond with valid JSON only in this exact structure:
 {
-  "name": "Item Name",
-  "icon": "Emoji",
-  "category": "degradable" or "non-degradable" or "landfill",
-  "categoryLabel": "String category label",
-  "scrapRate": "e.g. ₹18 / kg",
-  "binColor": "green" or "blue" or "black",
-  "binName": "e.g. Blue Dry Recyclables Bin",
-  "creditsAwarded": number between 15 and 40,
-  "co2PreventedGrams": number between 50 and 500,
-  "weightGrams": estimated weight in grams,
-  "disposalTip": "Actionable segregation advice"
+  "name": "Specific Item Name",
+  "icon": "Relevant single emoji",
+  "category": "Degradable" or "Non-Degradable" or "Mix",
+  "categoryLabel": "Degradable" or "Non-Degradable" or "Mix",
+  "binColor": "emerald" (for Degradable) or "blue" (for Non-Degradable) or "rose" (for Mix),
+  "binName": "Green Bin (Degradable)" or "Blue Bin (Non-Degradable)" or "Red/Black Bin (Mix)",
+  "weightGrams": estimated weight in grams as a number,
+  "disposalTip": "Actionable segregation advice referencing India's waste management rules"
 }`;
 
       // Clean base64 string
@@ -123,7 +151,39 @@ Analyze this item and respond with valid JSON only in this exact structure:
       if (textOutput) {
         const jsonMatch = textOutput.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
-          return JSON.parse(jsonMatch[0]);
+          const parsed = JSON.parse(jsonMatch[0]);
+          const normCategory = normalizeCategory(parsed.category);
+          parsed.category = normCategory;
+          parsed.categoryLabel = normCategory;
+
+          // Assign correct bin styling
+          if (normCategory === 'Degradable') {
+            parsed.binColor = 'emerald';
+            parsed.binName = 'Green Bin (Degradable)';
+          } else if (normCategory === 'Mix') {
+            parsed.binColor = 'rose';
+            parsed.binName = 'Red/Black Bin (Mix)';
+          } else {
+            parsed.binColor = 'blue';
+            parsed.binName = 'Blue Bin (Non-Degradable)';
+          }
+
+          const weightGrams = typeof parsed.weightGrams === 'number' && parsed.weightGrams > 0 
+            ? parsed.weightGrams 
+            : 80;
+
+          // Compute dynamic credits and CO2 based on Indian scrap benchmarks
+          const valuation = await calculateDynamicCredits({
+            category: normCategory,
+            itemName: parsed.name || normCategory,
+            weightGrams,
+          });
+
+          parsed.weightGrams = valuation.weightGrams;
+          parsed.creditsAwarded = valuation.creditsAwarded;
+          parsed.co2PreventedGrams = valuation.co2PreventedGrams;
+
+          return parsed;
         }
       }
     } catch (err) {
@@ -131,13 +191,41 @@ Analyze this item and respond with valid JSON only in this exact structure:
     }
   }
 
-  // Resilient Local Semantic Fallback
+  // Resilient Local Statutory Fallback Engine
   const hintLower = (itemHint || '').toLowerCase();
+  let matchedItem = FALLBACK_TAXONOMY[2]; // Default: Non-Degradable plastic
+
   for (const item of FALLBACK_TAXONOMY) {
     if (item.keywords.some(kw => hintLower.includes(kw))) {
-      return item;
+      matchedItem = item;
+      break;
     }
   }
 
-  return FALLBACK_TAXONOMY[0];
+  // Parse any weight hint from filename (e.g. "500g", "1kg", "200g")
+  let estimatedWeight = matchedItem.defaultWeightGrams;
+  const weightMatch = hintLower.match(/(\d+)\s*(kg|g)/);
+  if (weightMatch) {
+    const val = parseInt(weightMatch[1], 10);
+    estimatedWeight = weightMatch[2] === 'kg' ? val * 1000 : val;
+  }
+
+  const valuation = await calculateDynamicCredits({
+    category: matchedItem.category,
+    itemName: matchedItem.name,
+    weightGrams: estimatedWeight,
+  });
+
+  return {
+    name: matchedItem.name,
+    icon: matchedItem.icon,
+    category: matchedItem.category,
+    categoryLabel: matchedItem.categoryLabel,
+    binColor: matchedItem.binColor,
+    binName: matchedItem.binName,
+    weightGrams: valuation.weightGrams,
+    creditsAwarded: valuation.creditsAwarded,
+    co2PreventedGrams: valuation.co2PreventedGrams,
+    disposalTip: matchedItem.disposalTip,
+  };
 }

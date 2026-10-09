@@ -102,10 +102,10 @@ export default function PickerDashboard({ user, pickups, onCompletePickup, onLog
               <div className="flex items-center justify-between mb-3">
                 <span className="text-xs font-mono font-bold text-stone-400">#{item.bookingRef}</span>
                 <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${
-                  item.stream === 'degradable' ? 'bg-emerald-100 text-emerald-800' :
-                  item.stream === 'non-degradable' ? 'bg-blue-100 text-blue-800' : 'bg-rose-100 text-rose-800'
+                  item.stream?.toLowerCase() === 'degradable' ? 'bg-emerald-100 text-emerald-800' :
+                  item.stream?.toLowerCase() === 'non-degradable' ? 'bg-blue-100 text-blue-800' : 'bg-rose-100 text-rose-800'
                 }`}>
-                  {item.streamLabel}
+                  {item.streamLabel || item.stream}
                 </span>
               </div>
 

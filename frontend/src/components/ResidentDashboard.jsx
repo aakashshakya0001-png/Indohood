@@ -10,97 +10,106 @@ import {
   Image as ImageIcon
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { api } from '../services/api';
 
 const DEMO_ITEMS = [
+  {
+    id: 'kitchen_peels',
+    name: 'Kitchen Vegetable & Fruit Peels',
+    icon: '🍌',
+    category: 'Degradable',
+    categoryLabel: 'Degradable',
+    binColor: 'emerald',
+    binName: 'Green Bin (Degradable)',
+    creditsAwarded: 15,
+    co2PreventedGrams: 150,
+    weightGrams: 250,
+    disposalTip: '100% biodegradable wet organics. Decomposes naturally into nutrient-rich soil compost.',
+    image: 'https://images.unsplash.com/photo-1584473457406-6240486418e9?w=400&auto=format&fit=crop&q=80',
+  },
+  {
+    id: 'cardboard_box',
+    name: 'Biodegradable Cardboard & Pulp Box',
+    icon: '📦',
+    category: 'Degradable',
+    categoryLabel: 'Degradable',
+    binColor: 'emerald',
+    binName: 'Green Bin (Degradable)',
+    creditsAwarded: 12,
+    co2PreventedGrams: 160,
+    weightGrams: 180,
+    disposalTip: 'Biodegradable unlaminated paper pulp. Naturally dissolves and degrades back into organic fiber.',
+    image: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=400&auto=format&fit=crop&q=80',
+  },
   {
     id: 'plastic_bottle',
     name: 'Plastic PET Bottles & Jars',
     icon: '🥤',
-    category: 'non-degradable',
-    categoryLabel: 'Non-Degradable (Recyclable)',
-    scrapRate: '₹18 / kg (35 Credits)',
+    category: 'Non-Degradable',
+    categoryLabel: 'Non-Degradable',
     binColor: 'blue',
-    binName: 'Blue Dry Recyclables Bin',
-    creditsAwarded: 25,
-    co2PreventedGrams: 85,
+    binName: 'Blue Bin (Non-Degradable)',
+    creditsAwarded: 4,
+    co2PreventedGrams: 75,
     weightGrams: 40,
-    disposalTip: 'Empty residual liquid, crush bottle flat to save collection space, and keep caps together.',
+    disposalTip: 'Non-biodegradable synthetic polymers under Plastic Waste Rules 2022. Collect clean and dry for mechanical recycling.',
     image: 'https://images.unsplash.com/photo-1562243061-204550d8a2c9?w=400&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'cardboard_box',
-    name: 'Amazon Delivery Cardboard Box',
-    icon: '📦',
-    category: 'non-degradable',
-    categoryLabel: 'Non-Degradable (Paper Pulp)',
-    scrapRate: '₹14 / kg (28 Credits)',
-    binColor: 'blue',
-    binName: 'Blue / Dry Paper Pulp Stream',
-    creditsAwarded: 20,
-    co2PreventedGrams: 110,
-    weightGrams: 180,
-    disposalTip: 'Peel off synthetic plastic tape, flatten the box flat, and bundle with jute cord.',
-    image: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=400&auto=format&fit=crop&q=80',
   },
   {
     id: 'usb_cable',
     name: 'Discarded Charger & Copper Wires',
     icon: '🔌',
-    category: 'non-degradable',
-    categoryLabel: 'Non-Degradable (E-Waste / Metal)',
-    scrapRate: '₹45 / kg (90 Credits)',
+    category: 'Non-Degradable',
+    categoryLabel: 'Non-Degradable',
     binColor: 'blue',
-    binName: 'Blue Dedicated E-Waste Stream',
-    creditsAwarded: 35,
-    co2PreventedGrams: 320,
+    binName: 'Blue Bin (Non-Degradable)',
+    creditsAwarded: 99,
+    co2PreventedGrams: 375,
     weightGrams: 90,
-    disposalTip: 'High-purity copper conductors inside! Keep dry and separate for certified smelting recovery.',
+    disposalTip: 'High-value non-biodegradable copper conductors under E-Waste Rules 2022. Keep dry for certified recovery.',
     image: 'https://images.unsplash.com/photo-1588508065123-287b28e013da?w=400&auto=format&fit=crop&q=80',
   },
   {
     id: 'aluminum_can',
     name: 'Aluminum Beverage Cans',
     icon: '🥫',
-    category: 'non-degradable',
-    categoryLabel: 'Non-Degradable (High Scrap Value)',
-    scrapRate: '₹95 / kg (190 Credits)',
+    category: 'Non-Degradable',
+    categoryLabel: 'Non-Degradable',
     binColor: 'blue',
-    binName: 'Blue Dry Recyclables Bin',
-    creditsAwarded: 30,
-    co2PreventedGrams: 280,
+    binName: 'Blue Bin (Non-Degradable)',
+    creditsAwarded: 13,
+    co2PreventedGrams: 425,
     weightGrams: 50,
-    disposalTip: 'Rinse to remove sticky soda residue and crush flat. 100% infinitely recyclable metal.',
+    disposalTip: 'Non-biodegradable metal alloy. Rinse residue and crush flat for circular metal smelting.',
     image: 'https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=400&auto=format&fit=crop&q=80',
   },
   {
-    id: 'newspaper_stack',
-    name: 'Old Newspaper & Magazine Raddi',
-    icon: '📰',
-    category: 'non-degradable',
-    categoryLabel: 'Non-Degradable (Clean Paper Stream)',
-    scrapRate: '₹16 / kg (32 Credits)',
-    binColor: 'blue',
-    binName: 'Blue Dry Recyclables Bin',
-    creditsAwarded: 25,
-    co2PreventedGrams: 160,
-    weightGrams: 500,
-    disposalTip: 'Stack newspapers dry and tie firmly with string. Re-pulped into carton packaging.',
-    image: 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=400&auto=format&fit=crop&q=80',
+    id: 'medical_blister',
+    name: 'Medical Blister Packs & Medicine',
+    icon: '💊',
+    category: 'Mix',
+    categoryLabel: 'Mix',
+    binColor: 'rose',
+    binName: 'Red/Black Bin (Mix)',
+    creditsAwarded: 6,
+    co2PreventedGrams: 45,
+    weightGrams: 30,
+    disposalTip: 'Cannot degrade and cannot be recycled. Hazardous pharmaceutical waste routed to municipal incineration.',
+    image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop&q=80',
   },
   {
-    id: 'glass_bottle',
-    name: 'Clean Sauce & Beverage Glass Bottle',
-    icon: '🍾',
-    category: 'non-degradable',
-    categoryLabel: 'Non-Degradable (Glass Container)',
-    scrapRate: '₹5 / kg (10 Credits)',
-    binColor: 'blue',
-    binName: 'Blue Dry Recyclables Bin',
-    creditsAwarded: 15,
-    co2PreventedGrams: 95,
-    weightGrams: 350,
-    disposalTip: 'Rinse clean with water and remove metal lids. Glass is melted into new bottles without degradation.',
-    image: 'https://images.unsplash.com/photo-1562243061-204550d8a2c9?w=400&auto=format&fit=crop&q=80',
+    id: 'sanitary_napkin',
+    name: 'Sanitary Napkins & Biohazard Refuse',
+    icon: '🩹',
+    category: 'Mix',
+    categoryLabel: 'Mix',
+    binColor: 'rose',
+    binName: 'Red/Black Bin (Mix)',
+    creditsAwarded: 6,
+    co2PreventedGrams: 40,
+    weightGrams: 50,
+    disposalTip: 'Non-degradable biohazard sanitary waste. Wrap securely in marked newspaper with a red cross for sanitary disposal.',
+    image: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=400&auto=format&fit=crop&q=80',
   },
 ];
 
@@ -245,27 +254,27 @@ const DIY_HOME_IDEAS = [
 const SEGREGATION_STREAMS = [
   {
     color: 'emerald',
-    badge: '🟢 Wet / Degradable Stream',
-    title: 'Green Bin: Organic & Wet Kitchen Waste',
-    desc: 'Decomposes naturally within 30-60 days. Must never be sent to landfills where it ferments anaerobically into greenhouse methane gas.',
+    badge: '🟢 Degradable',
+    title: 'Green Bin: Degradable (Biodegradable Organics)',
+    desc: 'All items that are biodegradable and decompose naturally into organic compost. Earn +15 Eco-Credits per verified handover.',
     accepted: [
       'Fruit & vegetable peels, cuttings, and cores',
       'Cooked food leftovers, rice, and roti crumbs',
       'Used tea leaves, coffee grounds & egg shells',
-      'Garden leaves, cut flowers & balcony clippings'
+      'Garden leaves, cut flowers & compostable paper pulp'
     ],
     forbidden: [
-      'NO plastic carry bags or wrappers',
-      'NO milk packets or metallized chips bags',
-      'NO sanitary pads or diapers'
+      'NO plastic carry bags or non-degradable wrappers',
+      'NO metal cans or glass bottles',
+      'NO sanitary pads, diapers or medical blister packs'
     ],
-    actionTip: 'Drain extra curry/gravy water before dumping. Use for home balcony composting or handover daily.'
+    actionTip: 'Drain extra curry/gravy water before dumping. Use for home balcony composting or green bin municipal handover.'
   },
   {
     color: 'blue',
-    badge: '🔵 Dry / Recyclable Stream',
-    title: 'Blue Bin: Dry Recyclables & High-Value Scrap',
-    desc: 'Non-degradable commodities that feed the circular economy. You earn direct Eco-Credits when Raju the Eco-Picker collects this stream!',
+    badge: '🔵 Non-Degradable',
+    title: 'Blue Bin: Non-Degradable (Recyclables & Scrap)',
+    desc: 'Items that are not biodegradable and feed the circular recycling economy. Earn +25 Eco-Credits when Raju the Eco-Picker collects this stream!',
     accepted: [
       'Clean PET water and beverage bottles',
       'Delivery cardboard boxes and corrugated cartons',
@@ -274,17 +283,17 @@ const SEGREGATION_STREAMS = [
       'Old chargers, USB cables, batteries & small e-waste'
     ],
     forbidden: [
-      'NO wet food-stained paper or pizza oil boxes',
-      'NO broken ceramics or mirror shards',
+      'NO wet organic food scraps or vegetable peels',
+      'NO sanitary napkins, diapers or soiled biohazard waste',
       'NO used medical blister strips'
     ],
     actionTip: 'Rinse milk & drink containers dry. Flatten cardboard boxes to save space before doorstep collection.'
   },
   {
     color: 'rose',
-    badge: '🔴 Hazardous & Refuse Stream',
-    title: 'Red/Black Bin: Sanitary & Hazardous Refuse',
-    desc: 'Items that carry infectious pathogens or toxic heavy metal laminates. Scientifically routed to authorized municipal incinerators.',
+    badge: '🔴 Mix',
+    title: 'Red/Black Bin: Mix (Hazardous & Sanitary Refuse)',
+    desc: 'Items that cannot degrade and cannot be recycled, classified as hazardous or sanitary waste. Earn +5 Eco-Credits for responsible segregation.',
     accepted: [
       'Sanitary napkins, baby diapers & incontinence pads',
       'Expired pharmaceutical blister tablets & syrups',
@@ -292,8 +301,8 @@ const SEGREGATION_STREAMS = [
       'Chemical floor cleaner containers & pesticide bottles'
     ],
     forbidden: [
-      'NEVER mix with green kitchen peels',
-      'NEVER mix with dry recyclable paper/plastic'
+      'NEVER mix with green degradable kitchen peels',
+      'NEVER mix with blue non-degradable recyclable paper/plastic'
     ],
     actionTip: 'Wrap sanitary items securely in marked newspaper with a red cross. Protects sanitation workers from bio-hazards.'
   }
@@ -354,16 +363,16 @@ const COMMUNITY_ACTIVITIES = [
     userLocation: 'Flat 302, Tower B',
     society: 'Green Valley Apartments',
     userAvatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&auto=format&fit=crop&q=80',
-    actionTitle: 'Recycled 14 kg of Flattened Amazon & Flipkart Cartons',
-    category: 'Dry Scrap',
+    actionTitle: 'Recycled 14 kg of Plastic PET Bottles & Cans',
+    category: 'Non-Degradable',
     badgeColor: 'blue',
     impactStat: '8.4 kg CO₂ Prevented',
-    creditsEarned: 70,
+    creditsEarned: 25,
     timeAgo: '15m ago',
-    image: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=600&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1562243061-204550d8a2c9?w=600&auto=format&fit=crop&q=80',
     verified: true,
     cheers: 24,
-    notes: 'Removed all synthetic packing tape, bundled firmly with jute cord, and handed over at the doorstep.'
+    notes: 'Segregated non-biodegradable plastics and metal cans into dry stream, crushed flat for circular doorstep collection.'
   },
   {
     id: 'act_2',
@@ -371,16 +380,16 @@ const COMMUNITY_ACTIVITIES = [
     userLocation: 'Villa 14, Lotus Enclave',
     society: 'Lotus Enclave, Sector 45',
     userAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80',
-    actionTitle: 'Harvested 12 kg of Balcony Organic Compost',
-    category: 'Composting',
+    actionTitle: 'Composted 12 kg Kitchen Vegetable Peels & Food Scraps',
+    category: 'Degradable',
     badgeColor: 'emerald',
     impactStat: '15.2 kg Methane Neutralized',
-    creditsEarned: 60,
+    creditsEarned: 15,
     timeAgo: '45m ago',
     image: 'https://images.unsplash.com/photo-1584473457406-6240486418e9?w=600&auto=format&fit=crop&q=80',
     verified: true,
     cheers: 38,
-    notes: 'Zero odor using 2:1 dry leaves to kitchen peels ratio! Now feeding our tomato and basil planters.'
+    notes: '100% biodegradable wet organics segregated into green stream for organic fertilizer composting.'
   },
   {
     id: 'act_3',
@@ -389,49 +398,66 @@ const COMMUNITY_ACTIVITIES = [
     society: 'Orchid Heights',
     userAvatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=120&auto=format&fit=crop&q=80',
     actionTitle: 'Diverted 5 Broken Phone Chargers & Copper Cable Scrap',
-    category: 'E-Waste',
-    badgeColor: 'amber',
+    category: 'Non-Degradable',
+    badgeColor: 'blue',
     impactStat: '450g High-Purity Copper Recovered',
-    creditsEarned: 95,
+    creditsEarned: 25,
     timeAgo: '2h ago',
     image: 'https://images.unsplash.com/photo-1588508065123-287b28e013da?w=600&auto=format&fit=crop&q=80',
     verified: true,
     cheers: 19,
-    notes: 'Cleared our family gadget drawer. Kept heavy metals out of municipal soil leachate.'
+    notes: 'Non-biodegradable electronic cables kept out of municipal soil leachate and scheduled for smelting recovery.'
   },
   {
     id: 'act_4',
+    userName: 'Meera Patel',
+    userLocation: 'Flat 205, Block C',
+    society: 'Sunrise Heights',
+    userAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&auto=format&fit=crop&q=80',
+    actionTitle: 'Safely Handed Over Medical Blister Packs & Sanitary Refuse',
+    category: 'Mix',
+    badgeColor: 'rose',
+    impactStat: 'Bio-Hazard Secured',
+    creditsEarned: 5,
+    timeAgo: '3h ago',
+    image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&auto=format&fit=crop&q=80',
+    verified: true,
+    cheers: 28,
+    notes: 'Cannot degrade and cannot be recycled. Securely sealed in marked newspaper with a red cross for sanitary municipal disposal.'
+  },
+  {
+    id: 'act_5',
     userName: 'Green Valley Eco-Club',
     userLocation: 'Central Clubhouse Lawn',
     society: 'Green Valley Society',
     userAvatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=120&auto=format&fit=crop&q=80',
-    actionTitle: 'Society Zero-Plastic Sunday: 165 kg PET Bottles Crushed',
-    category: 'Community Drives',
-    badgeColor: 'teal',
+    actionTitle: 'Society Drive: 165 kg PET Plastic Bottles Collected',
+    category: 'Non-Degradable',
+    badgeColor: 'blue',
     impactStat: '210 kg CO₂ Equivalent Diverted',
-    creditsEarned: 350,
+    creditsEarned: 25,
     timeAgo: '5h ago',
     image: 'https://images.unsplash.com/photo-1562243061-204550d8a2c9?w=600&auto=format&fit=crop&q=80',
     verified: true,
     cheers: 62,
-    notes: '38 resident families joined together to collect, empty, and flatten beverage bottles for bulk circular recycling.'
+    notes: '38 resident families collected and flattened non-degradable beverage bottles for doorstep pickup.'
   },
   {
-    id: 'act_5',
-    userName: 'Rohan Mehta',
-    userLocation: 'Flat 102, Block A',
-    society: 'Surya Residency',
-    userAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80',
-    actionTitle: 'Upcycled 6 Glass Pickle & Sauce Jars into Self-Watering Pots',
-    category: 'Upcycling DIY',
-    badgeColor: 'purple',
-    impactStat: '6 Glass Containers Reused',
-    creditsEarned: 40,
+    id: 'act_6',
+    userName: 'Ananya Sen',
+    userLocation: 'Flat 101, Palm Grove',
+    society: 'Palm Grove',
+    userAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80',
+    actionTitle: 'Segregated 8 kg Wet Fruit Peels & Garden Leaves',
+    category: 'Degradable',
+    badgeColor: 'emerald',
+    impactStat: '9.8 kg Methane Neutralized',
+    creditsEarned: 15,
     timeAgo: 'Yesterday',
     image: 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=600&auto=format&fit=crop&q=80',
     verified: true,
-    cheers: 45,
-    notes: 'Cleaned off labels with warm water and converted them into zero-cost indoor kitchen herb planters.'
+    cheers: 31,
+    notes: 'Pure biodegradable green stream waste deposited in society community compost tumbler.'
   }
 ];
 
@@ -552,27 +578,30 @@ export default function ResidentDashboard({
   // Derive user-performed doorstep collection & recycling activities from pickups prop
   const userPickupActivities = (pickups || []).map((p) => {
     const isCompleted = p.status === 'COMPLETED';
-    let category = 'Dry Scrap';
+    let category = 'Non-Degradable';
+    const rawCat = (p.stream || p.streamLabel || '').toLowerCase();
     const label = ((p.streamLabel || '') + ' ' + (p.itemName || '')).toLowerCase();
-    if (label.includes('paper') || label.includes('cardboard') || label.includes('carton') || label.includes('box')) {
-      category = 'Dry Scrap';
-    } else if (label.includes('compost') || label.includes('organic') || label.includes('wet') || label.includes('peel') || label.includes('food')) {
-      category = 'Composting';
-    } else if (label.includes('cable') || label.includes('phone') || label.includes('electronic') || label.includes('e-waste') || label.includes('wire') || label.includes('charger')) {
-      category = 'E-Waste';
-    } else if (label.includes('drive') || label.includes('clean') || label.includes('society')) {
-      category = 'Community Drives';
-    } else if (label.includes('bottle') || label.includes('plastic') || label.includes('upcycling') || label.includes('diy') || label.includes('jar')) {
-      category = 'Upcycling DIY';
+
+    if (rawCat === 'degradable' || label.includes('peel') || label.includes('food') || label.includes('compost') || label.includes('organic') || label.includes('wet') || label.includes('pulp') || label.includes('cardboard') || label.includes('banana') || label.includes('leaf')) {
+      category = 'Degradable';
+    } else if (rawCat === 'mix' || label.includes('medical') || label.includes('medicine') || label.includes('sanitary') || label.includes('napkin') || label.includes('diaper') || label.includes('blister') || label.includes('hazard')) {
+      category = 'Mix';
+    } else {
+      category = 'Non-Degradable';
     }
+
+    const defaultCredits = category === 'Degradable' ? 15 : category === 'Mix' ? 5 : 25;
+    const creditsAwarded = p.credits || defaultCredits;
 
     let image = 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=600&auto=format&fit=crop&q=80';
     if (p.itemId?.includes('bottle') || p.itemName?.toLowerCase().includes('bottle') || p.itemName?.toLowerCase().includes('plastic')) {
       image = 'https://images.unsplash.com/photo-1562243061-204550d8a2c9?w=600&auto=format&fit=crop&q=80';
     } else if (p.itemId?.includes('cable') || p.itemName?.toLowerCase().includes('cable') || p.itemName?.toLowerCase().includes('charger') || p.itemName?.toLowerCase().includes('wire')) {
       image = 'https://images.unsplash.com/photo-1588508065123-287b28e013da?w=600&auto=format&fit=crop&q=80';
-    } else if (p.itemId?.includes('cardboard') || p.itemName?.toLowerCase().includes('box') || p.itemName?.toLowerCase().includes('carton')) {
-      image = 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=600&auto=format&fit=crop&q=80';
+    } else if (p.itemId?.includes('peel') || p.itemName?.toLowerCase().includes('food') || p.itemName?.toLowerCase().includes('compost')) {
+      image = 'https://images.unsplash.com/photo-1584473457406-6240486418e9?w=600&auto=format&fit=crop&q=80';
+    } else if (p.itemId?.includes('medical') || p.itemName?.toLowerCase().includes('blister') || p.itemName?.toLowerCase().includes('sanitary')) {
+      image = 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&auto=format&fit=crop&q=80';
     }
 
     return {
@@ -587,9 +616,9 @@ export default function ResidentDashboard({
         ? `Recycled & Handed Over: ${p.itemName}`
         : `Scheduled Doorstep Handover for ${p.itemName}`,
       category,
-      badgeColor: isCompleted ? 'emerald' : 'amber',
-      impactStat: `${p.co2Grams ? (p.co2Grams / 1000).toFixed(2) : ((p.credits || 25) * 0.08).toFixed(2)} kg CO₂ Prevented`,
-      creditsEarned: p.credits || 25,
+      badgeColor: category === 'Degradable' ? 'emerald' : category === 'Mix' ? 'rose' : 'blue',
+      impactStat: `${p.co2Grams ? (p.co2Grams / 1000).toFixed(2) : (creditsAwarded * 0.08).toFixed(2)} kg CO₂ Prevented`,
+      creditsEarned: creditsAwarded,
       timeAgo: p.pickupDate ? (isCompleted ? `Verified (${p.pickupDate})` : `Scheduled (${p.pickupDate})`) : 'Recent',
       image,
       verified: isCompleted,
@@ -804,7 +833,7 @@ export default function ResidentDashboard({
     }
   }, [activeTab, customImage]);
 
-  const capturePhoto = () => {
+  const capturePhoto = async () => {
     const video = mobileVideoRef.current || videoRef.current;
     if (!video) return;
     const canvas = document.createElement('canvas');
@@ -816,59 +845,80 @@ export default function ResidentDashboard({
 
     stopCamera();
     setCustomImage(dataUrl);
+    setIsScanning(true);
+
+    try {
+      const aiResult = await api.classifyWaste({ imageBase64: dataUrl });
+      if (aiResult) {
+        setScanResult({
+          id: 'scan_' + Date.now(),
+          name: aiResult.name,
+          icon: aiResult.icon || '♻️',
+          category: aiResult.category,
+          categoryLabel: aiResult.categoryLabel || aiResult.category,
+          binColor: aiResult.binColor,
+          binName: aiResult.binName,
+          creditsAwarded: aiResult.creditsAwarded,
+          co2PreventedGrams: aiResult.co2PreventedGrams,
+          weightGrams: aiResult.weightGrams,
+          disposalTip: aiResult.disposalTip,
+          image: dataUrl,
+        });
+        setIsScanning(false);
+        return;
+      }
+    } catch (e) {
+      console.warn('[Camera AI Scanner] Remote analysis failed, using local classifier:', e);
+    }
 
     const scrapOptions = [
       {
         name: 'Scanned PET Plastic Scrap',
         icon: '🥤',
-        category: 'non-degradable',
-        categoryLabel: 'Non-Degradable (Rigid Plastic)',
-        scrapRate: '₹22 / kg (45 Credits)',
+        category: 'Non-Degradable',
+        categoryLabel: 'Non-Degradable',
         binColor: 'blue',
-        binName: 'Blue Dry Recyclables Bin',
-        creditsAwarded: 28,
-        co2PreventedGrams: 95,
+        binName: 'Blue Bin (Non-Degradable)',
+        creditsAwarded: 4,
+        co2PreventedGrams: 80,
         weightGrams: 45,
-        disposalTip: 'Rinse residual liquids, crush flat, and keep caps attached for doorstep collection.',
+        disposalTip: 'Non-biodegradable synthetic plastic. Rinse residual liquid and crush flat for circular recycling collection.',
       },
       {
-        name: 'Scanned Cardboard Packaging',
-        icon: '📦',
-        category: 'non-degradable',
-        categoryLabel: 'Non-Degradable (Paper Pulp)',
-        scrapRate: '₹14 / kg (28 Credits)',
-        binColor: 'blue',
-        binName: 'Blue / Dry Paper Pulp Stream',
-        creditsAwarded: 22,
-        co2PreventedGrams: 110,
-        weightGrams: 160,
-        disposalTip: 'Remove synthetic adhesive tape and flatten flat for doorstep pickup.',
-      },
-      {
-        name: 'Scanned Aluminum Beverage Can',
-        icon: '🥫',
-        category: 'non-degradable',
-        categoryLabel: 'Non-Degradable (High Scrap Metal)',
-        scrapRate: '₹95 / kg (190 Credits)',
-        binColor: 'blue',
-        binName: 'Blue Dedicated Metal Bin',
-        creditsAwarded: 35,
-        co2PreventedGrams: 280,
-        weightGrams: 55,
-        disposalTip: 'Rinse sticky residue and crush flat. 100% infinitely recyclable metal.',
+        name: 'Scanned Kitchen Organic Peels',
+        icon: '🍌',
+        category: 'Degradable',
+        categoryLabel: 'Degradable',
+        binColor: 'emerald',
+        binName: 'Green Bin (Degradable)',
+        creditsAwarded: 14,
+        co2PreventedGrams: 140,
+        weightGrams: 220,
+        disposalTip: '100% biodegradable wet organics. Decomposes naturally into rich soil compost.',
       },
       {
         name: 'Scanned Electronic Wire & E-Waste',
         icon: '🔌',
-        category: 'non-degradable',
-        categoryLabel: 'Non-Degradable (E-Waste / Metal)',
-        scrapRate: '₹45 / kg (90 Credits)',
+        category: 'Non-Degradable',
+        categoryLabel: 'Non-Degradable',
         binColor: 'blue',
-        binName: 'Blue Dedicated E-Waste Stream',
-        creditsAwarded: 40,
-        co2PreventedGrams: 340,
+        binName: 'Blue Bin (Non-Degradable)',
+        creditsAwarded: 120,
+        co2PreventedGrams: 460,
         weightGrams: 110,
-        disposalTip: 'Contains high-purity copper. Keep dry and bundle for certified recycling pickup.',
+        disposalTip: 'High-value non-biodegradable metallic conductors. Bundle dry for certified recovery.',
+      },
+      {
+        name: 'Scanned Medicine Blister Pack',
+        icon: '💊',
+        category: 'Mix',
+        categoryLabel: 'Mix',
+        binColor: 'rose',
+        binName: 'Red/Black Bin (Mix)',
+        creditsAwarded: 6,
+        co2PreventedGrams: 45,
+        weightGrams: 30,
+        disposalTip: 'Cannot degrade and cannot be recycled. Hazardous medical refuse routed to municipal incineration.',
       }
     ];
 
@@ -879,7 +929,6 @@ export default function ResidentDashboard({
       icon: chosen.icon,
       category: chosen.category,
       categoryLabel: chosen.categoryLabel,
-      scrapRate: chosen.scrapRate,
       binColor: chosen.binColor,
       binName: chosen.binName,
       creditsAwarded: chosen.creditsAwarded,
@@ -890,27 +939,127 @@ export default function ResidentDashboard({
     });
   };
 
+  const classifyFileItem = (fileName, url) => {
+    const lower = (fileName || '').toLowerCase();
+    let cat = 'Non-Degradable';
+    let icon = '📦';
+    let binColor = 'blue';
+    let binName = 'Blue Bin (Non-Degradable)';
+    let tip = 'Non-biodegradable recyclable scrap under Plastic Waste Rules. Collect clean and dry for circular recycling.';
+    let weightGrams = 120;
+
+    const weightMatch = lower.match(/(\d+)\s*(kg|g)/);
+    if (weightMatch) {
+      const val = parseInt(weightMatch[1], 10);
+      weightGrams = weightMatch[2] === 'kg' ? val * 1000 : val;
+    }
+
+    let credits = 8;
+    let co2Grams = 140;
+
+    if (lower.includes('peel') || lower.includes('food') || lower.includes('fruit') || lower.includes('vegetable') || lower.includes('organic') || lower.includes('wet') || lower.includes('compost') || lower.includes('leaf') || lower.includes('banana')) {
+      cat = 'Degradable';
+      icon = '🍌';
+      binColor = 'emerald';
+      binName = 'Green Bin (Degradable)';
+      tip = 'Biodegradable wet organics under SWM Rules 2016. Decomposes naturally into rich compost.';
+      if (!weightMatch) weightGrams = 220;
+      credits = Math.max(3, Math.round((weightGrams / 1000) * 12 * 2.5));
+      co2Grams = Math.round(weightGrams * 0.6);
+    } else if (lower.includes('cardboard') || lower.includes('box') || lower.includes('carton') || lower.includes('paper')) {
+      cat = 'Degradable';
+      icon = '📦';
+      binColor = 'emerald';
+      binName = 'Green Bin (Degradable)';
+      tip = 'Biodegradable paper and cardboard pulp. Decomposes naturally into organic fiber.';
+      if (!weightMatch) weightGrams = 200;
+      credits = Math.max(4, Math.round((weightGrams / 1000) * 14 * 2.5));
+      co2Grams = Math.round(weightGrams * 0.9);
+    } else if (lower.includes('medical') || lower.includes('medicine') || lower.includes('sanitary') || lower.includes('napkin') || lower.includes('diaper') || lower.includes('blister') || lower.includes('hazard') || lower.includes('tablet')) {
+      cat = 'Mix';
+      icon = lower.includes('sanitary') || lower.includes('napkin') || lower.includes('diaper') ? '🩹' : '💊';
+      binColor = 'rose';
+      binName = 'Red/Black Bin (Mix)';
+      tip = 'Cannot degrade and cannot be recycled. Hazardous refuse routed to municipal incineration under Bio-Medical Waste Rules.';
+      if (!weightMatch) weightGrams = 40;
+      credits = Math.max(3, Math.min(25, Math.round(5 + (weightGrams / 100) * 2)));
+      co2Grams = Math.round(weightGrams * 1.1);
+    } else {
+      // Non-Degradable items
+      if (lower.includes('copper') || lower.includes('wire') || lower.includes('cable') || lower.includes('charger')) {
+        icon = '🔌';
+        if (!weightMatch) weightGrams = 90;
+        credits = Math.max(10, Math.round((weightGrams / 1000) * 550 * 2.0));
+        co2Grams = Math.round(weightGrams * 4.2);
+        tip = 'High-value non-biodegradable copper conductors under E-Waste Rules 2022. Keep dry for certified recovery.';
+      } else if (lower.includes('can') || lower.includes('aluminum') || lower.includes('tin')) {
+        icon = '🥫';
+        if (!weightMatch) weightGrams = 50;
+        credits = Math.max(5, Math.round((weightGrams / 1000) * 130 * 2.0));
+        co2Grams = Math.round(weightGrams * 8.5);
+        tip = 'Non-biodegradable aluminium metal. Rinse and crush flat for circular metal smelting.';
+      } else {
+        icon = '🥤';
+        if (!weightMatch) weightGrams = 40;
+        credits = Math.max(3, Math.round((weightGrams / 1000) * 22 * 2.0));
+        co2Grams = Math.round(weightGrams * 1.8);
+      }
+    }
+
+    return {
+      id: 'custom_' + Date.now(),
+      name: fileName.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ') || `${cat} Household Waste`,
+      icon,
+      category: cat,
+      categoryLabel: cat,
+      binColor,
+      binName,
+      creditsAwarded: credits,
+      co2PreventedGrams: co2Grams,
+      weightGrams,
+      disposalTip: tip,
+      image: url,
+    };
+  };
+
   const handleFileUpload = (e) => {
     const file = e.target.files?.[0];
     if (file) {
       stopCamera();
       const url = URL.createObjectURL(file);
       setCustomImage(url);
-      triggerScan({
-        id: 'custom_' + Date.now(),
-        name: file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ') || 'Household Recyclable Scrap',
-        icon: '📸',
-        category: 'non-degradable',
-        categoryLabel: 'Non-Degradable (Recyclable Scrap)',
-        scrapRate: '₹20 / kg (40 Credits)',
-        binColor: 'blue',
-        binName: 'Blue Recyclables Bin',
-        creditsAwarded: 25,
-        co2PreventedGrams: 115,
-        weightGrams: 120,
-        disposalTip: 'Rinse dry and pack in blue designated bag for doorstep collection and payout.',
-        image: url,
-      });
+      setIsScanning(true);
+
+      const reader = new FileReader();
+      reader.onload = async (ev) => {
+        const base64Data = ev.target?.result;
+        try {
+          const aiResult = await api.classifyWaste({ imageBase64: base64Data, itemHint: file.name });
+          if (aiResult) {
+            setScanResult({
+              id: 'scan_' + Date.now(),
+              name: aiResult.name,
+              icon: aiResult.icon || '♻️',
+              category: aiResult.category,
+              categoryLabel: aiResult.categoryLabel || aiResult.category,
+              binColor: aiResult.binColor,
+              binName: aiResult.binName,
+              creditsAwarded: aiResult.creditsAwarded,
+              co2PreventedGrams: aiResult.co2PreventedGrams,
+              weightGrams: aiResult.weightGrams,
+              disposalTip: aiResult.disposalTip,
+              image: url,
+            });
+            setIsScanning(false);
+            return;
+          }
+        } catch (err) {
+          console.warn('[File Upload AI Scanner] Falling back to local classifier:', err);
+        }
+        triggerScan(classifyFileItem(file.name, url));
+      };
+      reader.onerror = () => triggerScan(classifyFileItem(file.name, url));
+      reader.readAsDataURL(file);
     }
   };
 
@@ -921,21 +1070,38 @@ export default function ResidentDashboard({
     if (file) {
       const url = URL.createObjectURL(file);
       setCustomImage(url);
-      triggerScan({
-        id: 'custom_' + Date.now(),
-        name: file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ') || 'Household Recyclable Scrap',
-        icon: '📸',
-        category: 'non-degradable',
-        categoryLabel: 'Non-Degradable (Recyclable Scrap)',
-        scrapRate: '₹20 / kg (40 Credits)',
-        binColor: 'blue',
-        binName: 'Blue Recyclables Bin',
-        creditsAwarded: 25,
-        co2PreventedGrams: 115,
-        weightGrams: 120,
-        disposalTip: 'Rinse dry and pack in blue designated bag for doorstep collection and payout.',
-        image: url,
-      });
+      setIsScanning(true);
+
+      const reader = new FileReader();
+      reader.onload = async (ev) => {
+        const base64Data = ev.target?.result;
+        try {
+          const aiResult = await api.classifyWaste({ imageBase64: base64Data, itemHint: file.name });
+          if (aiResult) {
+            setScanResult({
+              id: 'scan_' + Date.now(),
+              name: aiResult.name,
+              icon: aiResult.icon || '♻️',
+              category: aiResult.category,
+              categoryLabel: aiResult.categoryLabel || aiResult.category,
+              binColor: aiResult.binColor,
+              binName: aiResult.binName,
+              creditsAwarded: aiResult.creditsAwarded,
+              co2PreventedGrams: aiResult.co2PreventedGrams,
+              weightGrams: aiResult.weightGrams,
+              disposalTip: aiResult.disposalTip,
+              image: url,
+            });
+            setIsScanning(false);
+            return;
+          }
+        } catch (err) {
+          console.warn('[File Drop AI Scanner] Falling back to local classifier:', err);
+        }
+        triggerScan(classifyFileItem(file.name, url));
+      };
+      reader.onerror = () => triggerScan(classifyFileItem(file.name, url));
+      reader.readAsDataURL(file);
     }
   };
 
@@ -1173,7 +1339,7 @@ export default function ResidentDashboard({
             <div className="space-y-6 animate-fade-in">
               {/* Filter Chips */}
               <div className="flex flex-wrap gap-2">
-                {['All', 'My Activities', 'Dry Scrap', 'Composting', 'E-Waste', 'Community Drives', 'Upcycling DIY'].map((cat) => (
+                {['All', 'My Activities', 'Degradable', 'Non-Degradable', 'Mix'].map((cat) => (
                   <button
                     key={cat}
                     type="button"
@@ -1239,7 +1405,11 @@ export default function ResidentDashboard({
                             </div>
                           </div>
 
-                          <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-stone-100 text-stone-700 border border-stone-200 shrink-0">
+                          <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full shrink-0 border ${
+                            act.category === 'Degradable' ? 'bg-emerald-50 text-emerald-800 border-emerald-300' :
+                            act.category === 'Mix' ? 'bg-rose-50 text-rose-800 border-rose-300' :
+                            'bg-blue-50 text-blue-800 border-blue-300'
+                          }`}>
                             {act.category}
                           </span>
                         </div>
@@ -1683,6 +1853,15 @@ export default function ResidentDashboard({
                       </div>
 
                       <div className="flex-1 space-y-3 text-left w-full">
+                        <div className="flex items-center gap-2">
+                          <span className={`text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border ${
+                            scanResult.category === 'Degradable' ? 'bg-emerald-50 text-emerald-800 border-emerald-300' :
+                            scanResult.category === 'Mix' ? 'bg-rose-50 text-rose-800 border-rose-300' :
+                            'bg-blue-50 text-blue-800 border-blue-300'
+                          }`}>
+                            {scanResult.category}
+                          </span>
+                        </div>
                         <h3 className="text-xl font-black text-stone-900 flex items-center gap-2">
                           <span>{scanResult.icon}</span>
                           <span>{scanResult.name}</span>
@@ -1693,12 +1872,14 @@ export default function ResidentDashboard({
 
                         <div className="grid grid-cols-2 gap-3 pt-1">
                           <div className="p-3 rounded-xl bg-amber-50 border border-amber-200">
-                            <p className="text-[10px] font-bold text-amber-900">Scrap Valuation</p>
+                            <p className="text-[10px] font-bold text-amber-900 uppercase">Eco-Credits Awarded</p>
                             <p className="text-sm font-black text-amber-700">+{scanResult.creditsAwarded} Credits</p>
+                            <p className="text-[10px] text-amber-800/80 font-medium">Dynamic fair valuation</p>
                           </div>
                           <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
-                            <p className="text-[10px] font-bold text-emerald-900">Avoided CO₂</p>
+                            <p className="text-[10px] font-bold text-emerald-900 uppercase">Avoided CO₂ & Weight</p>
                             <p className="text-sm font-black text-emerald-700">-{scanResult.co2PreventedGrams} g</p>
+                            <p className="text-[10px] text-emerald-800/80 font-medium">~{scanResult.weightGrams >= 1000 ? `${(scanResult.weightGrams / 1000).toFixed(1)} kg` : `${scanResult.weightGrams} g`} estimated</p>
                           </div>
                         </div>
                       </div>
@@ -1908,8 +2089,12 @@ export default function ResidentDashboard({
                       </div>
 
                       <div className="flex-1 min-w-0 space-y-1">
-                        <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200">
-                          Dry Recyclable Scrap
+                        <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full border ${
+                          scanResult.category === 'Degradable' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' :
+                          scanResult.category === 'Mix' ? 'bg-rose-100 text-rose-800 border-rose-200' :
+                          'bg-blue-100 text-blue-800 border-blue-200'
+                        }`}>
+                          {scanResult.category}
                         </span>
                         <h3 className="text-base font-black text-stone-900 flex items-center gap-1.5 pt-1">
                           <span>{scanResult.icon}</span>
@@ -1921,17 +2106,17 @@ export default function ResidentDashboard({
                       </div>
                     </div>
 
-                    {/* Valuation Grid */}
+                    {/* Dynamic Valuation Grid (Strictly Eco-Credits, no raw market prices) */}
                     <div className="grid grid-cols-2 gap-2.5">
                       <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200">
-                        <p className="text-[10px] font-bold text-amber-900 uppercase">Credits Awarded</p>
+                        <p className="text-[10px] font-bold text-amber-900 uppercase">Eco-Credits Awarded</p>
                         <p className="text-base font-black text-amber-700">+{scanResult.creditsAwarded} Credits</p>
-                        <p className="text-[10px] text-stone-400">{scanResult.scrapRate || '₹20 / kg'}</p>
+                        <p className="text-[10px] text-amber-800/80 font-medium">Dynamic fair valuation</p>
                       </div>
                       <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200">
                         <p className="text-[10px] font-bold text-emerald-900 uppercase">CO₂ Prevented</p>
                         <p className="text-base font-black text-emerald-700">-{scanResult.co2PreventedGrams} g</p>
-                        <p className="text-[10px] text-stone-400">~{scanResult.weightGrams} g weight</p>
+                        <p className="text-[10px] text-emerald-800/80 font-medium">~{scanResult.weightGrams >= 1000 ? `${(scanResult.weightGrams / 1000).toFixed(1)} kg` : `${scanResult.weightGrams} g`} estimated</p>
                       </div>
                     </div>
 
@@ -2249,7 +2434,11 @@ export default function ResidentDashboard({
                               </div>
                             </div>
 
-                            <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-stone-100 text-stone-700 border border-stone-200 shrink-0">
+                            <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full shrink-0 border ${
+                              act.category === 'Degradable' ? 'bg-emerald-50 text-emerald-800 border-emerald-300' :
+                              act.category === 'Mix' ? 'bg-rose-50 text-rose-800 border-rose-300' :
+                              'bg-blue-50 text-blue-800 border-blue-300'
+                            }`}>
                               {act.category}
                             </span>
                           </div>
@@ -2559,7 +2748,7 @@ export default function ResidentDashboard({
                 <Calendar className="w-5 h-5 text-teal-300" />
                 <h3 className="text-xl font-black tracking-tight">Schedule Doorstep Scrap Handover</h3>
               </div>
-              <p className="text-xs text-teal-100">Item: {scanResult.name} • Reward: +{scanResult.creditsAwarded} Eco-Credits</p>
+              <p className="text-xs text-teal-100">Item: {scanResult.name} • Category: {scanResult.category} • Reward: +{scanResult.creditsAwarded} Eco-Credits</p>
             </div>
 
             <form onSubmit={handleConfirmPickupBooking} className="p-6 space-y-4">

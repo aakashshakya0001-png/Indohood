@@ -54,13 +54,13 @@ export default function Footer({ onNavigate }) {
             </h4>
             <ul className="space-y-2.5 text-sm text-stone-400">
               <li className="hover:text-stone-200 transition-colors">
-                Degradable (Green Compost Bin)
+                Degradable (+15 Credits)
               </li>
               <li className="hover:text-stone-200 transition-colors">
-                Non-Degradable (Blue Dry Recyclables)
+                Non-Degradable (+25 Credits)
               </li>
               <li className="hover:text-stone-200 transition-colors">
-                Landfill-Only (Red/Black Refuse)
+                Mix (+5 Credits)
               </li>
             </ul>
           </div>
