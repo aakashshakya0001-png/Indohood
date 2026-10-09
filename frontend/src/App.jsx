@@ -14,35 +14,16 @@ export default function App() {
   const [authModalMode, setAuthModalMode] = useState('login');
 
   // Eco-Credits Wallet State
-  const [walletBalance, setWalletBalance] = useState(120);
+  const [walletBalance, setWalletBalance] = useState(0);
 
-  // Pickups State
-  const [pickups, setPickups] = useState([
-    {
-      id: 'pk_initial_1',
-      bookingRef: 'IND-7842',
-      itemId: 'cardboard_bundle',
-      itemName: 'Delivery Cardboard Boxes (3 Pack)',
-      itemIcon: '📦',
-      stream: 'Degradable',
-      streamLabel: 'Degradable',
-      weightEst: '0.85 kg',
-      credits: 15,
-      co2Grams: 110,
-      pickupDate: '2026-10-09',
-      timeSlot: 'Morning (9:00 AM - 12:00 PM)',
-      address: 'Flat 402, Green Valley Apartments, New Delhi',
-      instructions: 'Flattened and tied with jute string beside door',
-      status: 'SCHEDULED',
-      createdAt: '2026-10-08T10:00:00Z',
-    },
-  ]);
+  // Pickups State (Starts empty for real user data)
+  const [pickups, setPickups] = useState([]);
 
-  // Real-Time Carbon & Environmental Impact Stats
+  // Real-Time Carbon & Environmental Impact Stats (Starts at zero for real data tracking)
   const [impactStats, setImpactStats] = useState({
-    co2PreventedGrams: 4200, // 4.2 kg
-    landfillDivertedGrams: 6500, // 6.5 kg
-    itemsSegregated: 18,
+    co2PreventedGrams: 0,
+    landfillDivertedGrams: 0,
+    itemsSegregated: 0,
   });
 
   // Navigation Handler

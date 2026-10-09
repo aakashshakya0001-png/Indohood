@@ -308,158 +308,9 @@ const SEGREGATION_STREAMS = [
   }
 ];
 
-const DEFAULT_NOTIFICATIONS = [
-  {
-    id: 'notif_1',
-    title: 'Eco-Picker Assigned for Doorstep Collection',
-    desc: 'The Eco-Picker is assigned for tomorrow morning (9:00 AM - 12:00 PM). Please keep your dry recyclables bundled beside your door.',
-    time: '10 mins ago',
-    type: 'pickup',
-    icon: '🚛',
-    unread: true,
-  },
-  {
-    id: 'notif_2',
-    title: '+25 Eco-Credits Deposited!',
-    desc: 'Verification completed for PET Plastic Bottles. 85g CO₂ emissions prevented from Ghazipur landfill. Balance updated.',
-    time: '2 hours ago',
-    type: 'credits',
-    icon: '🪙',
-    unread: true,
-  },
-  {
-    id: 'notif_3',
-    title: 'Bedrock Multimodal AI Vision Milestone',
-    desc: 'Amazon Bedrock successfully identified copper cable e-waste with 99.4% confidence and recommended certified recovery.',
-    time: 'Yesterday',
-    type: 'ai',
-    icon: '✨',
-    unread: false,
-  },
-  {
-    id: 'notif_4',
-    title: 'Tier 3 Master Recycler Certificate Ready',
-    desc: 'Your Green Citizen Commendation certificate has been updated with your latest carbon abatement total of 4.2 kg CO₂.',
-    time: '2 days ago',
-    type: 'cert',
-    icon: '🎖️',
-    unread: false,
-  },
-  {
-    id: 'notif_5',
-    title: 'Society Clean Air Champion',
-    desc: 'Green Valley Apartments residents collectively diverted over 120 kg of dry scrap from municipal landfills this week!',
-    time: '3 days ago',
-    type: 'community',
-    icon: '🌱',
-    unread: false,
-  },
-];
+const DEFAULT_NOTIFICATIONS = [];
 
-const COMMUNITY_ACTIVITIES = [
-  {
-    id: 'act_1',
-    userName: 'Aarav Sharma',
-    userLocation: 'Flat 302, Tower B',
-    society: 'Green Valley Apartments',
-    userAvatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=120&auto=format&fit=crop&q=80',
-    actionTitle: 'Recycled 14 kg of Plastic PET Bottles & Cans',
-    category: 'Non-Degradable',
-    badgeColor: 'blue',
-    impactStat: '8.4 kg CO₂ Prevented',
-    creditsEarned: 25,
-    timeAgo: '15m ago',
-    image: 'https://images.unsplash.com/photo-1562243061-204550d8a2c9?w=600&auto=format&fit=crop&q=80',
-    verified: true,
-    cheers: 24,
-    notes: 'Segregated non-biodegradable plastics and metal cans into dry stream, crushed flat for circular doorstep collection.'
-  },
-  {
-    id: 'act_2',
-    userName: 'Priya Nair',
-    userLocation: 'Villa 14, Lotus Enclave',
-    society: 'Lotus Enclave, Sector 45',
-    userAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80',
-    actionTitle: 'Composted 12 kg Kitchen Vegetable Peels & Food Scraps',
-    category: 'Degradable',
-    badgeColor: 'emerald',
-    impactStat: '15.2 kg Methane Neutralized',
-    creditsEarned: 15,
-    timeAgo: '45m ago',
-    image: 'https://images.unsplash.com/photo-1584473457406-6240486418e9?w=600&auto=format&fit=crop&q=80',
-    verified: true,
-    cheers: 38,
-    notes: '100% biodegradable wet organics segregated into green stream for organic fertilizer composting.'
-  },
-  {
-    id: 'act_3',
-    userName: 'Vikram Malhotra',
-    userLocation: 'Flat 804, Orchid Heights',
-    society: 'Orchid Heights',
-    userAvatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=120&auto=format&fit=crop&q=80',
-    actionTitle: 'Diverted 5 Broken Phone Chargers & Copper Cable Scrap',
-    category: 'Non-Degradable',
-    badgeColor: 'blue',
-    impactStat: '450g High-Purity Copper Recovered',
-    creditsEarned: 25,
-    timeAgo: '2h ago',
-    image: 'https://images.unsplash.com/photo-1588508065123-287b28e013da?w=600&auto=format&fit=crop&q=80',
-    verified: true,
-    cheers: 19,
-    notes: 'Non-biodegradable electronic cables kept out of municipal soil leachate and scheduled for smelting recovery.'
-  },
-  {
-    id: 'act_4',
-    userName: 'Meera Patel',
-    userLocation: 'Flat 205, Block C',
-    society: 'Sunrise Heights',
-    userAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&auto=format&fit=crop&q=80',
-    actionTitle: 'Safely Handed Over Medical Blister Packs & Sanitary Refuse',
-    category: 'Mix',
-    badgeColor: 'rose',
-    impactStat: 'Bio-Hazard Secured',
-    creditsEarned: 5,
-    timeAgo: '3h ago',
-    image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&auto=format&fit=crop&q=80',
-    verified: true,
-    cheers: 28,
-    notes: 'Cannot degrade and cannot be recycled. Securely sealed in marked newspaper with a red cross for sanitary municipal disposal.'
-  },
-  {
-    id: 'act_5',
-    userName: 'Green Valley Eco-Club',
-    userLocation: 'Central Clubhouse Lawn',
-    society: 'Green Valley Society',
-    userAvatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=120&auto=format&fit=crop&q=80',
-    actionTitle: 'Society Drive: 165 kg PET Plastic Bottles Collected',
-    category: 'Non-Degradable',
-    badgeColor: 'blue',
-    impactStat: '210 kg CO₂ Equivalent Diverted',
-    creditsEarned: 25,
-    timeAgo: '5h ago',
-    image: 'https://images.unsplash.com/photo-1562243061-204550d8a2c9?w=600&auto=format&fit=crop&q=80',
-    verified: true,
-    cheers: 62,
-    notes: '38 resident families collected and flattened non-degradable beverage bottles for doorstep pickup.'
-  },
-  {
-    id: 'act_6',
-    userName: 'Ananya Sen',
-    userLocation: 'Flat 101, Palm Grove',
-    society: 'Palm Grove',
-    userAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80',
-    actionTitle: 'Segregated 8 kg Wet Fruit Peels & Garden Leaves',
-    category: 'Degradable',
-    badgeColor: 'emerald',
-    impactStat: '9.8 kg Methane Neutralized',
-    creditsEarned: 15,
-    timeAgo: 'Yesterday',
-    image: 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=600&auto=format&fit=crop&q=80',
-    verified: true,
-    cheers: 31,
-    notes: 'Pure biodegradable green stream waste deposited in society community compost tumbler.'
-  }
-];
+const COMMUNITY_ACTIVITIES = [];
 
 const WASTE_AWARENESS_ARTICLES = [
   {
@@ -1130,6 +981,21 @@ export default function ResidentDashboard({
     setActiveTab('explore');
     setExploreSubTab('activity');
     setActivityCategoryFilter('My Activities');
+
+    // Add real notification for the scheduled pickup
+    setNotifications((prev) => [
+      {
+        id: 'notif_' + Date.now(),
+        title: 'Doorstep Pickup Scheduled',
+        desc: `Handover scheduled for ${scanResult.name} on ${pickupDate} (${timeSlot.split(' ')[0]}). Keep items ready for the Eco-Picker.`,
+        time: 'Just now',
+        type: 'pickup',
+        icon: '🚚',
+        unread: true,
+      },
+      ...prev,
+    ]);
+
     confetti({
       particleCount: 50,
       spread: 60,
@@ -1138,6 +1004,20 @@ export default function ResidentDashboard({
   };
 
   const handleCompletePickupTrigger = (pickupId, credits, co2Grams, weightGrams) => {
+    // Add real notification for credit deposit & carbon prevention
+    setNotifications((prev) => [
+      {
+        id: 'notif_complete_' + Date.now(),
+        title: `+${credits} Eco-Credits Deposited!`,
+        desc: `Verification completed for your segregated waste. ${co2Grams || 90}g CO₂ emissions prevented. Balance updated.`,
+        time: 'Just now',
+        type: 'credits',
+        icon: '🪙',
+        unread: true,
+      },
+      ...prev,
+    ]);
+
     confetti({
       particleCount: 90,
       spread: 75,
@@ -1182,7 +1062,9 @@ export default function ResidentDashboard({
 
   // Real-time zero-contamination accuracy score based on verified clean source segregation
   const completedPickupsCount = (pickups || []).filter((p) => p.status === 'COMPLETED').length;
-  const zeroContaminationScore = Math.min(99.9, 98.4 + (completedPickupsCount * 0.3)).toFixed(1);
+  const zeroContaminationScore = completedPickupsCount > 0
+    ? Math.min(99.9, 98.4 + (completedPickupsCount * 0.3)).toFixed(1)
+    : '100.0';
 
   const filteredDiyIdeas = diyCategory === 'all'
     ? DIY_HOME_IDEAS
@@ -2235,42 +2117,54 @@ export default function ResidentDashboard({
 
           {/* Notification List */}
           <div className="space-y-3">
-            {filteredNotifications.map((notif) => (
-              <div
-                key={notif.id}
-                onClick={() => {
-                  setNotifications((prev) =>
-                    prev.map((n) => (n.id === notif.id ? { ...n, unread: false } : n))
-                  );
-                }}
-                className={`p-4 sm:p-5 rounded-2xl border transition-all flex items-start gap-4 cursor-pointer ${
-                  notif.unread
-                    ? 'bg-white border-emerald-300 shadow-sm ring-1 ring-emerald-200/60'
-                    : 'bg-white/70 border-stone-200 hover:bg-white'
-                }`}
-              >
-                <div className="text-2xl sm:text-3xl shrink-0 p-2.5 rounded-2xl bg-stone-50 border border-stone-100">
-                  {notif.icon}
+            {filteredNotifications.length === 0 ? (
+              <div className="text-center py-16 bg-white rounded-3xl border border-stone-200 p-8 space-y-3 shadow-sm">
+                <div className="w-12 h-12 rounded-2xl bg-stone-100 flex items-center justify-center mx-auto text-stone-400">
+                  <Bell className="w-6 h-6 stroke-[1.5]" />
                 </div>
-
-                <div className="flex-1 min-w-0 space-y-1">
-                  <div className="flex items-center justify-between gap-2">
-                    <h4 className="text-sm sm:text-base font-bold text-stone-900 flex items-center gap-2">
-                      <span>{notif.title}</span>
-                      {notif.unread && (
-                        <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
-                      )}
-                    </h4>
-                    <span className="text-[11px] font-semibold text-stone-400 shrink-0">
-                      {notif.time}
-                    </span>
-                  </div>
-                  <p className="text-xs sm:text-sm text-stone-600 leading-relaxed">
-                    {notif.desc}
-                  </p>
-                </div>
+                <h4 className="text-sm font-bold text-stone-800">No notifications yet</h4>
+                <p className="text-xs text-stone-500 max-w-sm mx-auto">
+                  You will receive real updates here when you schedule a doorstep pickup or when the Eco-Picker deposits credits.
+                </p>
               </div>
-            ))}
+            ) : (
+              filteredNotifications.map((notif) => (
+                <div
+                  key={notif.id}
+                  onClick={() => {
+                    setNotifications((prev) =>
+                      prev.map((n) => (n.id === notif.id ? { ...n, unread: false } : n))
+                    );
+                  }}
+                  className={`p-4 sm:p-5 rounded-2xl border transition-all flex items-start gap-4 cursor-pointer ${
+                    notif.unread
+                      ? 'bg-white border-emerald-300 shadow-sm ring-1 ring-emerald-200/60'
+                      : 'bg-white/70 border-stone-200 hover:bg-white'
+                  }`}
+                >
+                  <div className="text-2xl sm:text-3xl shrink-0 p-2.5 rounded-2xl bg-stone-50 border border-stone-100">
+                    {notif.icon}
+                  </div>
+
+                  <div className="flex-1 min-w-0 space-y-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <h4 className="text-sm sm:text-base font-bold text-stone-900 flex items-center gap-2">
+                        <span>{notif.title}</span>
+                        {notif.unread && (
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+                        )}
+                      </h4>
+                      <span className="text-[11px] font-semibold text-stone-400 shrink-0">
+                        {notif.time}
+                      </span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-stone-600 leading-relaxed">
+                      {notif.desc}
+                    </p>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       )}

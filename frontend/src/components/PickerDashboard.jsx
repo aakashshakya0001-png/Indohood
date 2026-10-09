@@ -88,72 +88,88 @@ export default function PickerDashboard({ user, pickups, onCompletePickup, onLog
       </div>
 
       {/* Pickups List */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {displayList.map((item) => (
-          <div
-            key={item.id}
-            className={`p-6 rounded-3xl border flex flex-col justify-between transition-all ${
-              item.status === 'COMPLETED'
-                ? 'bg-emerald-50/50 border-emerald-200'
-                : 'bg-white border-stone-200 shadow-sm hover:shadow-md'
-            }`}
-          >
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-mono font-bold text-stone-400">#{item.bookingRef}</span>
-                <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${
-                  item.stream?.toLowerCase() === 'degradable' ? 'bg-emerald-100 text-emerald-800' :
-                  item.stream?.toLowerCase() === 'non-degradable' ? 'bg-blue-100 text-blue-800' : 'bg-rose-100 text-rose-800'
-                }`}>
-                  {item.streamLabel || item.stream}
-                </span>
+      {displayList.length === 0 ? (
+        <div className="text-center py-16 bg-white rounded-3xl border border-stone-200 p-8 space-y-3 shadow-sm">
+          <div className="w-12 h-12 rounded-2xl bg-stone-100 flex items-center justify-center mx-auto text-stone-400">
+            <Truck className="w-6 h-6 stroke-[1.5]" />
+          </div>
+          <h4 className="text-sm font-bold text-stone-800">
+            {activeFilter === 'pending' ? 'No pending pickups' : 'No completed pickups yet'}
+          </h4>
+          <p className="text-xs text-stone-500 max-w-sm mx-auto">
+            {activeFilter === 'pending'
+              ? 'When residents schedule scrap or waste pickups, they will appear here for verification.'
+              : 'Pickups you verify and weigh will be archived here.'}
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {displayList.map((item) => (
+            <div
+              key={item.id}
+              className={`p-6 rounded-3xl border flex flex-col justify-between transition-all ${
+                item.status === 'COMPLETED'
+                  ? 'bg-emerald-50/50 border-emerald-200'
+                  : 'bg-white border-stone-200 shadow-sm hover:shadow-md'
+              }`}
+            >
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs font-mono font-bold text-stone-400">#{item.bookingRef}</span>
+                  <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${
+                    item.stream?.toLowerCase() === 'degradable' ? 'bg-emerald-100 text-emerald-800' :
+                    item.stream?.toLowerCase() === 'non-degradable' ? 'bg-blue-100 text-blue-800' : 'bg-rose-100 text-rose-800'
+                  }`}>
+                    {item.streamLabel || item.stream}
+                  </span>
+                </div>
+
+                <h3 className="text-lg font-bold text-stone-900 flex items-center gap-2 mb-2">
+                  <span className="text-2xl">{item.itemIcon}</span>
+                  {item.itemName}
+                </h3>
+
+                <div className="space-y-1.5 p-3 rounded-2xl bg-stone-50 border border-stone-200 text-xs text-stone-600 mb-4">
+                  <p className="flex items-center gap-1.5 font-medium">
+                    <MapPin className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                    <span>{item.address}</span>
+                  </p>
+                  <p className="flex items-center gap-1.5">
+                    <Calendar className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>{item.pickupDate} • {item.timeSlot}</span>
+                  </p>
+                  {item.instructions && (
+                    <p className="text-[11px] text-stone-500 italic mt-1">
+                      Note: "{item.instructions}"
+                    </p>
+                  )}
+                </div>
               </div>
 
-              <h3 className="text-lg font-bold text-stone-900 flex items-center gap-2 mb-2">
-                <span className="text-2xl">{item.itemIcon}</span>
-                {item.itemName}
-              </h3>
-
-              <div className="space-y-1.5 p-3 rounded-2xl bg-stone-50 border border-stone-200 text-xs text-stone-600 mb-4">
-                <p className="flex items-center gap-1.5 font-medium">
-                  <MapPin className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                  <span>{item.address}</span>
-                </p>
-                <p className="flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                  <span>{item.pickupDate} • {item.timeSlot}</span>
-                </p>
-                {item.instructions && (
-                  <p className="text-[11px] text-stone-500 italic mt-1">
-                    Note: "{item.instructions}"
-                  </p>
+              <div className="pt-3 border-t border-stone-200">
+                {item.status === 'COMPLETED' ? (
+                  <div className="flex items-center justify-between text-xs font-bold text-emerald-800">
+                    <span className="flex items-center gap-1">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                      Verified & Paid
+                    </span>
+                    <span className="text-stone-500">+{item.credits} Credits Given</span>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => handleVerify(item)}
+                    className="w-full py-3 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-98"
+                  >
+                    <Scale className="w-4 h-4" />
+                    Verify Bag, Weigh & Issue Credits
+                  </button>
                 )}
               </div>
-            </div>
 
-            <div className="pt-3 border-t border-stone-200">
-              {item.status === 'COMPLETED' ? (
-                <div className="flex items-center justify-between text-xs font-bold text-emerald-800">
-                  <span className="flex items-center gap-1">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                    Verified & Paid
-                  </span>
-                  <span className="text-stone-500">+{item.credits} Credits Given</span>
-                </div>
-              ) : (
-                <button
-                  onClick={() => handleVerify(item)}
-                  className="w-full py-3 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-98"
-                >
-                  <Scale className="w-4 h-4" />
-                  Verify Bag, Weigh & Issue Credits
-                </button>
-              )}
             </div>
-
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
     </div>
   );

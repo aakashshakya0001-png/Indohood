@@ -125,7 +125,7 @@ flowchart LR
 {
   "actualWeightKg": 1.25,
   "verificationNotes": "Correctly segregated in blue bag",
-  "pickerId": "picker_raju"
+  "pickerId": "picker_01"
 }
 ```
 **Response**:
