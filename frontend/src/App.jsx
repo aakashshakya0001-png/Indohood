@@ -81,19 +81,34 @@ export default function App() {
   };
 
   // Picker Verification Handler
-  const handleCompletePickup = (pickupId, creditsEarned, co2Grams) => {
+  const handleCompletePickup = (pickupId, creditsEarned, co2Grams, weightGrams) => {
+    let resolvedWeightGrams = weightGrams;
+    const targetPickup = pickups.find((p) => p.id === pickupId);
+    if (!resolvedWeightGrams && targetPickup) {
+      if (typeof targetPickup.weightGrams === 'number' && targetPickup.weightGrams > 0) {
+        resolvedWeightGrams = targetPickup.weightGrams;
+      } else if (targetPickup.weightEst) {
+        const val = parseFloat(targetPickup.weightEst) || 0.5;
+        resolvedWeightGrams = targetPickup.weightEst.includes('kg') ? Math.round(val * 1000) : Math.round(val);
+      } else {
+        resolvedWeightGrams = 500;
+      }
+    }
+    const resolvedCo2 = co2Grams || targetPickup?.co2Grams || Math.round((resolvedWeightGrams || 500) * 1.8);
+    const resolvedCredits = creditsEarned || targetPickup?.credits || 20;
+
     setPickups((prev) =>
       prev.map((p) => (p.id === pickupId ? { ...p, status: 'COMPLETED' } : p))
     );
 
     // Deposit credits to wallet
-    setWalletBalance((prev) => prev + (creditsEarned || 20));
+    setWalletBalance((prev) => prev + resolvedCredits);
 
     // Update real-time carbon statistics
     setImpactStats((prev) => ({
       ...prev,
-      co2PreventedGrams: prev.co2PreventedGrams + (co2Grams || 90),
-      landfillDivertedGrams: prev.landfillDivertedGrams + (co2Grams * 1.5 || 135),
+      co2PreventedGrams: prev.co2PreventedGrams + resolvedCo2,
+      landfillDivertedGrams: prev.landfillDivertedGrams + (resolvedWeightGrams || 500),
       itemsSegregated: prev.itemsSegregated + 1,
     }));
   };

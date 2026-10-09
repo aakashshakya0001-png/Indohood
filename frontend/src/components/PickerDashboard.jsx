@@ -13,7 +13,7 @@ export default function PickerDashboard({ user, pickups, onCompletePickup, onLog
       colors: ['#0d9488', '#059669', '#f59e0b'],
     });
 
-    onCompletePickup(item.id, item.credits, item.co2Grams);
+    onCompletePickup(item.id, item.credits, item.co2Grams, item.weightGrams);
   };
 
   const pending = pickups.filter((p) => p.status !== 'COMPLETED');
@@ -42,7 +42,7 @@ export default function PickerDashboard({ user, pickups, onCompletePickup, onLog
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-black tracking-tight">
-            Eco-Picker: {user?.name || 'Raju'} 🚛
+            Eco-Picker: {user?.name || 'Assigned Picker'} 🚛
           </h1>
           <p className="text-xs sm:text-sm text-stone-300 max-w-xl">
             Inspect household bags at doorstep, verify stream sorting, and award Eco-Credits to residents.
