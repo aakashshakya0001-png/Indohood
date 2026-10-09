@@ -6,11 +6,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const SEEDS_DIR = path.join(__dirname, 'seeds');
-const DATA_DIR = path.join(__dirname, 'data');
+const DATA_DIR = (process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.LAMBDA_TASK_ROOT)
+  ? path.join('/tmp', 'data')
+  : path.join(__dirname, 'data');
 
 // Ensure data directory exists for persistent writes
 if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
+  try {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+  } catch (err) {
+    console.warn('[DB] Could not create DATA_DIR:', err.message);
+  }
 }
 
 function loadOrInitialize(entityName) {

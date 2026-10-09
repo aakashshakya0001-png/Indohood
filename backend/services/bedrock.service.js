@@ -87,10 +87,11 @@ const FALLBACK_TAXONOMY = [
  * Uses Amazon Bedrock Multimodal Vision when configured, with a smart statutory fallback.
  */
 export async function classifyWasteImage({ imageBase64, itemHint }) {
-  const region = process.env.AWS_REGION || 'us-east-1';
-  const modelId = process.env.BEDROCK_MODEL_ID || 'anthropic.claude-3-5-sonnet-20241022-v2:0';
+  const region = process.env.AWS_REGION || 'ap-southeast-2';
+  const modelId = process.env.BEDROCK_MODEL_ID || 'amazon.nova-pro-v1:0';
 
-  if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY && imageBase64) {
+  const hasCredentials = process.env.AWS_EXECUTION_ENV || (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY);
+  if (hasCredentials && imageBase64) {
     try {
       const client = new BedrockRuntimeClient({ region });
       const prompt = `You are IndoHood AI, an expert municipal waste segregation engine in India, strictly grounded in:

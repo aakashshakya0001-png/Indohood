@@ -59,14 +59,16 @@ app.use((err, req, res, next) => {
 
 import { initScrapScraperDaemon } from './services/scrap-scraper.service.js';
 
-app.listen(PORT, () => {
-  console.log(`=================================================`);
-  console.log(`🌱 IndoHood Backend running on http://localhost:${PORT}`);
-  console.log(`📡 API Health: http://localhost:${PORT}/api/health`);
-  console.log(`=================================================`);
+if (!process.env.LAMBDA_TASK_ROOT && !process.env.AWS_LAMBDA_FUNCTION_NAME) {
+  app.listen(PORT, () => {
+    console.log(`=================================================`);
+    console.log(`🌱 IndoHood Backend running on http://localhost:${PORT}`);
+    console.log(`📡 API Health: http://localhost:${PORT}/api/health`);
+    console.log(`=================================================`);
 
-  // Initialize automated 24h scrap rate scraper daemon
-  initScrapScraperDaemon();
-});
+    // Initialize automated 24h scrap rate scraper daemon
+    initScrapScraperDaemon();
+  });
+}
 
 export default app;

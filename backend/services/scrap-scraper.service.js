@@ -5,7 +5,10 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const CACHE_FILE = path.join(__dirname, '../../database/data/scrap-rates.json');
+const BUNDLED_CACHE_FILE = path.join(__dirname, '../../database/data/scrap-rates.json');
+const WRITABLE_CACHE_FILE = (process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.LAMBDA_TASK_ROOT)
+  ? path.join('/tmp', 'scrap-rates.json')
+  : BUNDLED_CACHE_FILE;
 
 // Default verified baseline rates (in ₹/kg)
 const DEFAULT_RATES = {
@@ -36,8 +39,9 @@ let inMemoryCache = {
  */
 function loadCachedRates() {
   try {
-    if (fs.existsSync(CACHE_FILE)) {
-      const data = JSON.parse(fs.readFileSync(CACHE_FILE, 'utf-8'));
+    const fileToRead = fs.existsSync(WRITABLE_CACHE_FILE) ? WRITABLE_CACHE_FILE : BUNDLED_CACHE_FILE;
+    if (fs.existsSync(fileToRead)) {
+      const data = JSON.parse(fs.readFileSync(fileToRead, 'utf-8'));
       if (data && data.rates) {
         inMemoryCache = data;
         return inMemoryCache;
@@ -54,11 +58,11 @@ function loadCachedRates() {
  */
 function persistCache(cacheData) {
   try {
-    const dir = path.dirname(CACHE_FILE);
+    const dir = path.dirname(WRITABLE_CACHE_FILE);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
-    fs.writeFileSync(CACHE_FILE, JSON.stringify(cacheData, null, 2), 'utf-8');
+    fs.writeFileSync(WRITABLE_CACHE_FILE, JSON.stringify(cacheData, null, 2), 'utf-8');
   } catch (err) {
     console.warn('[Scrap Scraper] Could not persist to disk cache:', err.message);
   }
