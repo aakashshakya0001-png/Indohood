@@ -6,6 +6,7 @@ import ResidentDashboard from './components/ResidentDashboard';
 import PickerDashboard from './components/PickerDashboard';
 import Footer from './components/Footer';
 import AuthModal from './components/AuthModal';
+import { api } from './services/api';
 
 export default function App() {
   // Authentication State (persisted in localStorage to keep user logged in on page refresh)
@@ -147,6 +148,10 @@ export default function App() {
       }
       return updated;
     });
+
+    if (currentUser?.id) {
+      api.updateUserProfile(currentUser.id, updatedProfile);
+    }
   };
 
   // Pickup Scheduling Handler

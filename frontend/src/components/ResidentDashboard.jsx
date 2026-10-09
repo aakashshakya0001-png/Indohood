@@ -420,10 +420,11 @@ export default function ResidentDashboard({
     }
   }, [activeTab]);
 
-  // Profile Customization State (Edit Profile: Bio, Avatar, Name)
+  // Profile Customization State (Edit Profile: Bio, Avatar, Name, Location)
   const [profileName, setProfileName] = useState(user?.name || 'Resident Citizen');
   const [profileImage, setProfileImage] = useState(user?.avatar || null);
   const [profileBio, setProfileBio] = useState(user?.bio || 'Eco-conscious citizen driving zero-waste living and source segregation 🌱');
+  const [profileLocation, setProfileLocation] = useState(user?.location || '');
   const [profileSubTab, setProfileSubTab] = useState('activity'); // 'activity' | 'certificate'
 
   // Keep profile state synced with user prop
@@ -431,6 +432,7 @@ export default function ResidentDashboard({
     if (user?.name) setProfileName(user.name);
     if (user?.avatar) setProfileImage(user.avatar);
     if (user?.bio) setProfileBio(user.bio);
+    if (user?.location !== undefined) setProfileLocation(user.location);
   }, [user]);
 
   // Explore Tab State (Sub-tabs: Activity & Articles)
@@ -539,11 +541,13 @@ export default function ResidentDashboard({
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const [tempName, setTempName] = useState('');
   const [tempBio, setTempBio] = useState('');
+  const [tempLocation, setTempLocation] = useState('');
   const [avatarPreview, setAvatarPreview] = useState(null);
 
   const openEditModal = () => {
     setTempName(profileName);
     setTempBio(profileBio);
+    setTempLocation(profileLocation || user?.location || '');
     setAvatarPreview(profileImage);
     setIsEditProfileModalOpen(true);
   };
@@ -572,18 +576,27 @@ export default function ResidentDashboard({
     const updatedName = tempName.trim() || profileName;
     const updatedBio = tempBio.trim();
     const updatedAvatar = avatarPreview;
+    const updatedLocation = tempLocation.trim();
 
     setProfileName(updatedName);
     setProfileBio(updatedBio);
     setProfileImage(updatedAvatar);
+    setProfileLocation(updatedLocation);
     setIsEditProfileModalOpen(false);
 
+    const profilePayload = {
+      name: updatedName,
+      bio: updatedBio,
+      avatar: updatedAvatar,
+      location: updatedLocation,
+    };
+
     if (onUpdateUser) {
-      onUpdateUser({
-        name: updatedName,
-        bio: updatedBio,
-        avatar: updatedAvatar,
-      });
+      onUpdateUser(profilePayload);
+    }
+
+    if (user?.id) {
+      api.updateUserProfile(user.id, profilePayload);
     }
 
     confetti({
@@ -2936,6 +2949,29 @@ export default function ResidentDashboard({
                   className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 text-sm font-semibold text-stone-900 bg-white"
                   required
                 />
+              </div>
+
+              {/* City / Locality Input (Private: For Regional Leaderboard Ranking Only) */}
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-bold text-stone-700 flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>City / Locality</span>
+                  </label>
+                  <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
+                    🔒 Private • For Ranking Only
+                  </span>
+                </div>
+                <input
+                  type="text"
+                  value={tempLocation}
+                  onChange={(e) => setTempLocation(e.target.value)}
+                  placeholder="e.g. New Delhi, Bengaluru, Mumbai, Pune"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 text-sm font-semibold text-stone-900 bg-white placeholder:text-stone-400 placeholder:font-normal"
+                />
+                <p className="text-[11px] text-stone-400 mt-1 leading-snug">
+                  Used exclusively to rank your carbon performance with citizens in your city. Not visible on your public profile or activity feed.
+                </p>
               </div>
 
               {/* Bio Textarea */}

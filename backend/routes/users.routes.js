@@ -26,15 +26,16 @@ router.get('/profile/:id', (req, res) => {
   }
 });
 
-// PUT /api/users/profile/:id (Update bio, avatar, name)
+// PUT /api/users/profile/:id (Update bio, avatar, name, address, location)
 router.put('/profile/:id', (req, res) => {
   try {
-    const { name, bio, avatar, address } = req.body;
+    const { name, bio, avatar, address, location } = req.body;
     const updated = db.updateUser(req.params.id, {
       ...(name && { name }),
       ...(bio !== undefined && { bio }),
       ...(avatar !== undefined && { avatar }),
-      ...(address && { address })
+      ...(address && { address }),
+      ...(location !== undefined && { location })
     });
 
     if (!updated) {
