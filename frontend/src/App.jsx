@@ -3,7 +3,6 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import HowItWorks from './components/HowItWorks';
 import ResidentDashboard from './components/ResidentDashboard';
-import PickerDashboard from './components/PickerDashboard';
 import Footer from './components/Footer';
 import AuthModal from './components/AuthModal';
 import { api } from './services/api';
@@ -206,10 +205,10 @@ export default function App() {
           />
         )}
 
-        {/* CONDITION 1: LOGGED IN AS RESIDENT */}
-        {currentUser && currentUser.role !== 'Picker' && (
+        {/* LOGGED IN AS RESIDENT CITIZEN */}
+        {currentUser && (
           <ResidentDashboard
-            user={currentUser}
+            user={{ ...currentUser, role: 'Resident' }}
             walletBalance={walletBalance}
             pickups={pickups}
             impactStats={impactStats}
@@ -217,16 +216,6 @@ export default function App() {
             onSimulatePickerComplete={handleCompletePickup}
             onLogout={handleLogout}
             onUpdateUser={handleUpdateUser}
-          />
-        )}
-
-        {/* CONDITION 2: LOGGED IN AS ECO-PICKER */}
-        {currentUser && currentUser.role === 'Picker' && (
-          <PickerDashboard
-            user={currentUser}
-            pickups={pickups}
-            onCompletePickup={handleCompletePickup}
-            onLogout={handleLogout}
           />
         )}
 

@@ -57,9 +57,9 @@ export default function Navbar({ user, walletBalance, onOpenAuth, onLogout, onNa
               </div>
 
               {/* User Profile */}
-              <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-stone-100/90 backdrop-blur-xs border border-stone-200 text-stone-700 text-xs font-medium">
+              <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-stone-100/90 backdrop-blur-xs border border-stone-200 text-stone-700 text-xs font-medium">
                 <span className="font-semibold text-stone-900">{user.name}</span>
-                <span className="text-stone-400">({user.role})</span>
+                <span className="text-emerald-800 font-bold text-[10px] bg-emerald-100/80 px-2 py-0.5 rounded-full">🌱 Resident</span>
               </div>
 
               {/* Logout Button */}

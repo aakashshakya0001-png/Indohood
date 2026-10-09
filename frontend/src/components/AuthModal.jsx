@@ -5,7 +5,7 @@ import { api } from '../services/api';
 export default function AuthModal({ isOpen, initialMode, onClose, onLoginSuccess }) {
   const [mode, setMode] = useState(initialMode || 'login'); // 'login' | 'signin' | 'forgot'
   const [registerStep, setRegisterStep] = useState('form'); // 'form' | 'otp' | 'success'
-  const [role, setRole] = useState('resident'); // 'resident' | 'picker'
+  const role = 'resident'; // Strictly Resident Citizen for hackathon platform
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -79,7 +79,7 @@ export default function AuthModal({ isOpen, initialMode, onClose, onLoginSuccess
         email,
         password,
         otp,
-        role
+        role: 'resident'
       });
 
       if (res && res.success) {
@@ -116,12 +116,10 @@ export default function AuthModal({ isOpen, initialMode, onClose, onLoginSuccess
           id: res.data.id || `usr_${Date.now()}`,
           name: res.data.name || email.split('@')[0],
           email: res.data.email || email,
-          role: res.data.role === 'picker' ? 'picker' : 'resident',
+          role: 'Resident',
           walletBalance: res.data.walletBalance ?? 0,
           tier: res.data.tier || 'Tier 1 Green Starter',
-          avatar: res.data.avatar || (res.data.role === 'picker'
-            ? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80'
-            : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80'),
+          avatar: res.data.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
           location: res.data.location || '',
           bio: res.data.bio || '',
           address: res.data.address || ''
@@ -168,8 +166,8 @@ export default function AuthModal({ isOpen, initialMode, onClose, onLoginSuccess
               {mode === 'login' && 'Log In to IndoHood'}
               {mode === 'signin' && (
                 registerStep === 'otp' ? 'Verify Your Email' :
-                registerStep === 'success' ? 'Verification Complete' :
-                'Register with Email'
+                registerStep === 'success' ? 'Registration Complete' :
+                'Register as Resident'
               )}
               {mode === 'forgot' && 'Reset Password'}
             </h3>
@@ -409,8 +407,8 @@ export default function AuthModal({ isOpen, initialMode, onClose, onLoginSuccess
                   <span className="font-bold">{email}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-stone-500">Account Role:</span>
-                  <span className="font-bold capitalize">{role === 'picker' ? 'Eco-Picker' : 'Resident Citizen'}</span>
+                  <span className="text-stone-500">Account Type:</span>
+                  <span className="font-bold text-emerald-800">🌱 Resident Citizen</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-stone-500">Status:</span>
@@ -437,32 +435,12 @@ export default function AuthModal({ isOpen, initialMode, onClose, onLoginSuccess
           <form onSubmit={handleInitiateRegistration} className="flex-1 p-6 sm:p-7 flex flex-col justify-between overflow-y-auto">
             <div className="space-y-3.5">
               
-              {/* Account Role Choice */}
-              <div>
-                <label className="block text-xs font-bold text-stone-700 mb-1">Select Your Role</label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setRole('resident')}
-                    className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                      role === 'resident'
-                        ? 'bg-emerald-50 border-emerald-500 text-emerald-800 shadow-xs'
-                        : 'border-stone-200 text-stone-600 hover:bg-stone-50'
-                    }`}
-                  >
-                    <span>🌱 Resident Citizen</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setRole('picker')}
-                    className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                      role === 'picker'
-                        ? 'bg-emerald-50 border-emerald-500 text-emerald-800 shadow-xs'
-                        : 'border-stone-200 text-stone-600 hover:bg-stone-50'
-                    }`}
-                  >
-                    <span>🚛 Eco-Picker</span>
-                  </button>
+              {/* Resident Citizen Registration Badge */}
+              <div className="flex items-center gap-2.5 p-3 rounded-2xl bg-emerald-50/80 border border-emerald-200/70 text-emerald-900 text-xs font-medium">
+                <span className="text-lg shrink-0">🌱</span>
+                <div>
+                  <span className="font-bold block text-emerald-950">Resident Citizen Account</span>
+                  <span className="text-[11px] text-emerald-800/90 leading-tight block">Join your neighborhood zero-waste community, scan waste, & earn Eco-Credits.</span>
                 </div>
               </div>
 

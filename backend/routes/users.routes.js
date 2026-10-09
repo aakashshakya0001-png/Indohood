@@ -149,24 +149,18 @@ router.post('/verify-and-register', async (req, res) => {
       });
     }
 
-    const normalizedRole = role.toLowerCase() === 'picker' ? 'picker' : 'resident';
-
     const newUser = {
       id: `usr_${Date.now()}`,
       name: (name || cleanEmail.split('@')[0]).trim(),
       email: cleanEmail,
       password: password,
-      role: normalizedRole,
+      role: 'resident',
       walletBalance: 0,
       tier: 'Tier 1 Green Starter',
       address: '',
       location: '', // Private location for regional ranking
-      bio: normalizedRole === 'picker' 
-        ? 'Certified circular waste aggregator & doorstep clean segregation verifier 🚛' 
-        : 'Eco-conscious citizen driving zero-waste living and source segregation 🌱',
-      avatar: normalizedRole === 'picker'
-        ? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80'
-        : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
+      bio: 'Eco-conscious citizen driving zero-waste living and source segregation 🌱',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
       isVerified: true,
       createdAt: new Date().toISOString()
     };

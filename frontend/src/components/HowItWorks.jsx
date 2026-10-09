@@ -13,8 +13,8 @@ export default function HowItWorks({ onGetStarted }) {
       image: '/step-select-date.jpg',
     },
     {
-      title: 'Picker Collects & Verifies',
-      desc: 'Your eco-picker arrives, validates that items are segregated into correct bins/bags, and records weight on their digital scale.',
+      title: 'Doorstep Collection & Verification',
+      desc: 'Your segregated dry and wet bins are collected right at your doorstep, verified, and weight is recorded on digital scales.',
       image: '/step-picker-collect.jpg',
     },
     {
