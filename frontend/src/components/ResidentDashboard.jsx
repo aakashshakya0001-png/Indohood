@@ -1828,15 +1828,14 @@ export default function ResidentDashboard({
             ) : (
               /* When an image has been uploaded or scanned, show valuation result in center */
               <div className="w-full max-w-2xl mx-auto bg-white rounded-3xl p-8 lg:p-10 border border-stone-200 shadow-md space-y-6">
-                <div className="flex items-center justify-between pb-4 border-b border-stone-100">
-                  <span className="text-xs font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-                    AI Scrap Analysis Result ✨
-                  </span>
+                <div className="flex items-center justify-start pb-4 border-b border-stone-100">
                   <button
                     onClick={() => setCustomImage(null)}
-                    className="text-xs font-bold text-stone-500 hover:text-stone-800 transition-colors cursor-pointer"
+                    className="p-1.5 -ml-1.5 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-full transition-colors cursor-pointer flex items-center justify-center"
+                    title="Scan another image"
+                    aria-label="Scan another image"
                   >
-                    ← Upload Another Image
+                    <ArrowRight className="w-5 h-5 stroke-[2.2]" />
                   </button>
                 </div>
 
@@ -1862,9 +1861,8 @@ export default function ResidentDashboard({
                             {scanResult.category}
                           </span>
                         </div>
-                        <h3 className="text-xl font-black text-stone-900 flex items-center gap-2">
-                          <span>{scanResult.icon}</span>
-                          <span>{scanResult.name}</span>
+                        <h3 className="text-xl font-black text-stone-900">
+                          {scanResult.name}
                         </h3>
                         <p className="text-xs text-stone-500 leading-relaxed">
                           {scanResult.disposalTip}
@@ -1891,7 +1889,7 @@ export default function ResidentDashboard({
                         className="flex-1 py-3.5 px-4 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-md shadow-emerald-600/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-98"
                       >
                         <Calendar className="w-4 h-4" />
-                        <span>Sell Item & Schedule Pickup</span>
+                        <span>Schedule Pickup</span>
                       </button>
 
                       <button
@@ -2060,18 +2058,17 @@ export default function ResidentDashboard({
             ) : (
               /* SCAN RESULT OR SCANNING STATE */
               <div className="bg-white rounded-3xl p-5 border border-stone-200 shadow-sm space-y-5">
-                <div className="flex items-center justify-between pb-3 border-b border-stone-100">
-                  <span className="text-xs font-black uppercase tracking-wider text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-                    AI Scrap Analysis ✨
-                  </span>
+                <div className="flex items-center justify-start pb-3 border-b border-stone-100">
                   <button
                     onClick={() => {
                       setCustomImage(null);
                       setIsCameraOpen(true);
                     }}
-                    className="text-xs font-bold text-stone-500 hover:text-stone-800 transition-colors cursor-pointer"
+                    className="p-1 -ml-1 text-stone-600 hover:text-stone-900 hover:bg-stone-100 rounded-full transition-colors cursor-pointer flex items-center justify-center"
+                    title="Scan another"
+                    aria-label="Scan another"
                   >
-                    ← Scan Another
+                    <ArrowRight className="w-5 h-5 stroke-[2.2]" />
                   </button>
                 </div>
 
@@ -2096,9 +2093,8 @@ export default function ResidentDashboard({
                         }`}>
                           {scanResult.category}
                         </span>
-                        <h3 className="text-base font-black text-stone-900 flex items-center gap-1.5 pt-1">
-                          <span>{scanResult.icon}</span>
-                          <span className="truncate">{scanResult.name}</span>
+                        <h3 className="text-base font-black text-stone-900 truncate pt-1">
+                          {scanResult.name}
                         </h3>
                         <p className="text-[11px] text-stone-500 line-clamp-2">
                           {scanResult.disposalTip}
@@ -2133,7 +2129,7 @@ export default function ResidentDashboard({
                         className="w-full py-3.5 px-4 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-md shadow-emerald-600/25 transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-98"
                       >
                         <Calendar className="w-4 h-4" />
-                        <span>Sell Item & Schedule Pickup</span>
+                        <span>Schedule Pickup</span>
                       </button>
 
                       <button
@@ -2818,7 +2814,7 @@ export default function ResidentDashboard({
                 className="w-full py-3.5 px-4 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 shadow-md transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-98"
               >
                 <Truck className="w-4 h-4" />
-                Confirm Doorstep Sale & Handover
+                Confirm Doorstep Pickup & Handover
               </button>
             </form>
           </div>
