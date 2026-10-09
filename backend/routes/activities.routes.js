@@ -1,12 +1,16 @@
 import { Router } from 'express';
+import dynamoService from '../services/dynamo.service.js';
 import db from '../../database/db.js';
 
 const router = Router();
 
 // GET /api/activities
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const list = db.getActivities();
+    let list = await dynamoService.getActivities();
+    if (!list || list.length === 0) {
+      list = db.getActivities();
+    }
     res.json({ success: true, count: list.length, data: list });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -14,7 +18,7 @@ router.get('/', (req, res) => {
 });
 
 // POST /api/activities
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const { actionTitle, category, impactStat, creditsEarned, image, notes, userName, userAvatar } = req.body;
     if (!actionTitle) {
@@ -32,7 +36,10 @@ router.post('/', (req, res) => {
     const defaultCredits = finalCategory === 'Degradable' ? 15 : finalCategory === 'Mix' ? 5 : 25;
     const badgeColor = finalCategory === 'Degradable' ? 'emerald' : finalCategory === 'Mix' ? 'rose' : 'blue';
 
-    const created = db.addActivity({
+    const activityData = {
+      id: `act_${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      cheers: 0,
       userName: userName || 'Resident Citizen',
       userLocation: 'Flat 402, Green Valley Apartments',
       society: 'Green Valley Society',
@@ -45,22 +52,41 @@ router.post('/', (req, res) => {
       image: image || 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=600&auto=format&fit=crop&q=80',
       notes: notes || 'Verified neighborhood waste segregation contribution.',
       verified: true
-    });
+    };
 
-    res.status(201).json({ success: true, data: created });
+    let saved = null;
+    try {
+      saved = await dynamoService.saveActivity(activityData);
+    } catch (dErr) {
+      console.warn('[Activities Route] DynamoDB saveActivity failed, fallback to local DB:', dErr.message);
+    }
+
+    const localCreated = db.addActivity(activityData);
+    const finalActivity = saved || localCreated;
+
+    res.status(201).json({ success: true, data: finalActivity });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
 
 // POST /api/activities/:id/cheer
-router.post('/:id/cheer', (req, res) => {
+router.post('/:id/cheer', async (req, res) => {
   try {
-    const cheered = db.cheerActivity(req.params.id);
-    if (!cheered) {
+    let cheered = null;
+    try {
+      cheered = await dynamoService.cheerActivity(req.params.id);
+    } catch (dErr) {
+      console.warn('[Activities Route] DynamoDB cheerActivity failed, fallback to local DB:', dErr.message);
+    }
+
+    const localCheered = db.cheerActivity(req.params.id);
+    const finalCheered = cheered || localCheered;
+
+    if (!finalCheered) {
       return res.status(404).json({ success: false, message: 'Activity not found' });
     }
-    res.json({ success: true, cheers: cheered.cheers, data: cheered });
+    res.json({ success: true, cheers: finalCheered.cheers, data: finalCheered });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
