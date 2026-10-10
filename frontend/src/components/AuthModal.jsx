@@ -76,7 +76,7 @@ export default function AuthModal({ isOpen, initialMode, onClose, onLoginSuccess
       const res = await api.sendVerificationOtp(email);
       if (res && res.success) {
         setRegisterStep('otp');
-        setSuccessNotice('Verification code sent to your email. Please check your inbox!');
+        setSuccessNotice('');
       } else {
         setErrorMessage(res?.message || 'Failed to send verification code. Please check your email.');
       }
@@ -465,14 +465,6 @@ export default function AuthModal({ isOpen, initialMode, onClose, onLoginSuccess
                 <p className="text-xs font-bold text-emerald-800 mt-0.5 bg-emerald-50 py-1 px-2.5 rounded-lg inline-block border border-emerald-100">
                   {email}
                 </p>
-              </div>
-
-              {/* Secure Notice */}
-              <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200/80 text-emerald-900 text-xs text-center flex items-center justify-center gap-2">
-                <Mail className="w-4 h-4 text-emerald-700 shrink-0" />
-                <span>
-                  Please check your <strong>Gmail inbox</strong> (or spam folder) for the 6-digit code.
-                </span>
               </div>
 
               <div>
