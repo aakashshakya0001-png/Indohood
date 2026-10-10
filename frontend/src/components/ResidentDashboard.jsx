@@ -505,15 +505,19 @@ export default function ResidentDashboard({
     const defaultCredits = category === 'Degradable' ? 15 : category === 'Mix' ? 5 : 25;
     const creditsAwarded = p.credits || defaultCredits;
 
-    let image = 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=600&auto=format&fit=crop&q=80';
-    if (p.itemId?.includes('bottle') || p.itemName?.toLowerCase().includes('bottle') || p.itemName?.toLowerCase().includes('plastic')) {
-      image = 'https://images.unsplash.com/photo-1562243061-204550d8a2c9?w=600&auto=format&fit=crop&q=80';
-    } else if (p.itemId?.includes('cable') || p.itemName?.toLowerCase().includes('cable') || p.itemName?.toLowerCase().includes('charger') || p.itemName?.toLowerCase().includes('wire')) {
-      image = 'https://images.unsplash.com/photo-1588508065123-287b28e013da?w=600&auto=format&fit=crop&q=80';
-    } else if (p.itemId?.includes('peel') || p.itemName?.toLowerCase().includes('food') || p.itemName?.toLowerCase().includes('compost')) {
-      image = 'https://images.unsplash.com/photo-1584473457406-6240486418e9?w=600&auto=format&fit=crop&q=80';
-    } else if (p.itemId?.includes('medical') || p.itemName?.toLowerCase().includes('blister') || p.itemName?.toLowerCase().includes('sanitary')) {
-      image = 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&auto=format&fit=crop&q=80';
+    // Prioritize the actual photo clicked or uploaded by the resident during scanning
+    let image = p.image || p.itemImage || p.itemPhoto;
+    if (!image) {
+      image = 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?w=600&auto=format&fit=crop&q=80';
+      if (p.itemId?.includes('bottle') || p.itemName?.toLowerCase().includes('bottle') || p.itemName?.toLowerCase().includes('plastic')) {
+        image = 'https://images.unsplash.com/photo-1562243061-204550d8a2c9?w=600&auto=format&fit=crop&q=80';
+      } else if (p.itemId?.includes('cable') || p.itemName?.toLowerCase().includes('cable') || p.itemName?.toLowerCase().includes('charger') || p.itemName?.toLowerCase().includes('wire')) {
+        image = 'https://images.unsplash.com/photo-1588508065123-287b28e013da?w=600&auto=format&fit=crop&q=80';
+      } else if (p.itemId?.includes('peel') || p.itemName?.toLowerCase().includes('food') || p.itemName?.toLowerCase().includes('compost')) {
+        image = 'https://images.unsplash.com/photo-1584473457406-6240486418e9?w=600&auto=format&fit=crop&q=80';
+      } else if (p.itemId?.includes('medical') || p.itemName?.toLowerCase().includes('blister') || p.itemName?.toLowerCase().includes('sanitary')) {
+        image = 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&auto=format&fit=crop&q=80';
+      }
     }
 
     return {
@@ -993,39 +997,64 @@ export default function ResidentDashboard({
     const file = e.target.files?.[0];
     if (file) {
       stopCamera();
-      const url = URL.createObjectURL(file);
-      setCustomImage(url);
       setIsScanning(true);
 
       const reader = new FileReader();
-      reader.onload = async (ev) => {
-        const base64Data = ev.target?.result;
-        try {
-          const aiResult = await api.classifyWaste({ imageBase64: base64Data, itemHint: file.name });
-          if (aiResult) {
-            setScanResult({
-              id: 'scan_' + Date.now(),
-              name: aiResult.name,
-              icon: aiResult.icon || '♻️',
-              category: aiResult.category,
-              categoryLabel: aiResult.categoryLabel || aiResult.category,
-              binColor: aiResult.binColor,
-              binName: aiResult.binName,
-              creditsAwarded: aiResult.creditsAwarded,
-              co2PreventedGrams: aiResult.co2PreventedGrams,
-              weightGrams: aiResult.weightGrams,
-              disposalTip: aiResult.disposalTip,
-              image: url,
-            });
-            setIsScanning(false);
-            return;
+      reader.onload = (ev) => {
+        const rawBase64 = ev.target?.result;
+        const img = new Image();
+        img.onload = async () => {
+          const canvas = document.createElement('canvas');
+          const maxDim = 640;
+          let width = img.width;
+          let height = img.height;
+          if (width > height) {
+            if (width > maxDim) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            }
+          } else {
+            if (height > maxDim) {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
           }
-        } catch (err) {
-          console.warn('[File Upload AI Scanner] Falling back to local classifier:', err);
-        }
-        triggerScan(classifyFileItem(file.name, url));
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+          setCustomImage(compressedDataUrl);
+
+          try {
+            const aiResult = await api.classifyWaste({ imageBase64: compressedDataUrl, itemHint: file.name });
+            if (aiResult) {
+              setScanResult({
+                id: 'scan_' + Date.now(),
+                name: aiResult.name,
+                icon: aiResult.icon || '♻️',
+                category: aiResult.category,
+                categoryLabel: aiResult.categoryLabel || aiResult.category,
+                binColor: aiResult.binColor,
+                binName: aiResult.binName,
+                creditsAwarded: aiResult.creditsAwarded,
+                co2PreventedGrams: aiResult.co2PreventedGrams,
+                weightGrams: aiResult.weightGrams,
+                disposalTip: aiResult.disposalTip,
+                image: compressedDataUrl,
+              });
+              setIsScanning(false);
+              return;
+            }
+          } catch (err) {
+            console.warn('[File Upload AI Scanner] Falling back to local classifier:', err);
+          }
+          triggerScan(classifyFileItem(file.name, compressedDataUrl));
+        };
+        img.src = rawBase64;
       };
-      reader.onerror = () => triggerScan(classifyFileItem(file.name, url));
+      reader.onerror = () => setIsScanning(false);
       reader.readAsDataURL(file);
     }
   };
@@ -1035,39 +1064,65 @@ export default function ResidentDashboard({
     setIsDragging(false);
     const file = e.dataTransfer?.files?.[0];
     if (file) {
-      const url = URL.createObjectURL(file);
-      setCustomImage(url);
+      stopCamera();
       setIsScanning(true);
 
       const reader = new FileReader();
-      reader.onload = async (ev) => {
-        const base64Data = ev.target?.result;
-        try {
-          const aiResult = await api.classifyWaste({ imageBase64: base64Data, itemHint: file.name });
-          if (aiResult) {
-            setScanResult({
-              id: 'scan_' + Date.now(),
-              name: aiResult.name,
-              icon: aiResult.icon || '♻️',
-              category: aiResult.category,
-              categoryLabel: aiResult.categoryLabel || aiResult.category,
-              binColor: aiResult.binColor,
-              binName: aiResult.binName,
-              creditsAwarded: aiResult.creditsAwarded,
-              co2PreventedGrams: aiResult.co2PreventedGrams,
-              weightGrams: aiResult.weightGrams,
-              disposalTip: aiResult.disposalTip,
-              image: url,
-            });
-            setIsScanning(false);
-            return;
+      reader.onload = (ev) => {
+        const rawBase64 = ev.target?.result;
+        const img = new Image();
+        img.onload = async () => {
+          const canvas = document.createElement('canvas');
+          const maxDim = 640;
+          let width = img.width;
+          let height = img.height;
+          if (width > height) {
+            if (width > maxDim) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            }
+          } else {
+            if (height > maxDim) {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
           }
-        } catch (err) {
-          console.warn('[File Drop AI Scanner] Falling back to local classifier:', err);
-        }
-        triggerScan(classifyFileItem(file.name, url));
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+          setCustomImage(compressedDataUrl);
+
+          try {
+            const aiResult = await api.classifyWaste({ imageBase64: compressedDataUrl, itemHint: file.name });
+            if (aiResult) {
+              setScanResult({
+                id: 'scan_' + Date.now(),
+                name: aiResult.name,
+                icon: aiResult.icon || '♻️',
+                category: aiResult.category,
+                categoryLabel: aiResult.categoryLabel || aiResult.category,
+                binColor: aiResult.binColor,
+                binName: aiResult.binName,
+                creditsAwarded: aiResult.creditsAwarded,
+                co2PreventedGrams: aiResult.co2PreventedGrams,
+                weightGrams: aiResult.weightGrams,
+                disposalTip: aiResult.disposalTip,
+                image: compressedDataUrl,
+              });
+              setIsScanning(false);
+              return;
+            }
+          } catch (err) {
+            console.warn('[File Drop AI Scanner] Falling back to local classifier:', err);
+          }
+          triggerScan(classifyFileItem(file.name, compressedDataUrl));
+        };
+        img.src = rawBase64;
       };
-      reader.onerror = () => triggerScan(classifyFileItem(file.name, url));
+      reader.onerror = () => setIsScanning(false);
       reader.readAsDataURL(file);
     }
   };
@@ -1080,9 +1135,12 @@ export default function ResidentDashboard({
       itemId: scanResult.id,
       itemName: scanResult.name,
       itemIcon: scanResult.icon,
+      image: scanResult.image || customImage || null,
+      itemImage: scanResult.image || customImage || null,
       stream: scanResult.category,
       streamLabel: scanResult.categoryLabel,
       weightEst: (scanResult.weightGrams / 1000).toFixed(2) + ' kg',
+      weightGrams: scanResult.weightGrams,
       credits: scanResult.creditsAwarded,
       co2Grams: scanResult.co2PreventedGrams,
       pickupDate: pickupDate,
@@ -2876,10 +2934,19 @@ export default function ResidentDashboard({
               >
                 <X className="w-5 h-5" />
               </button>
-              <div className="mb-1">
-                <h3 className="text-xl font-black tracking-tight">Schedule Handover</h3>
+              <div className="flex items-center gap-3">
+                {(scanResult.image || customImage) && (
+                  <img
+                    src={scanResult.image || customImage}
+                    alt={scanResult.name}
+                    className="w-12 h-12 rounded-xl object-cover border-2 border-white/40 shadow-xs shrink-0"
+                  />
+                )}
+                <div>
+                  <h3 className="text-xl font-black tracking-tight">Schedule Handover</h3>
+                  <p className="text-xs text-teal-100">Item: {scanResult.name} • Category: {scanResult.category} • +{scanResult.creditsAwarded} Eco-Credits</p>
+                </div>
               </div>
-              <p className="text-xs text-teal-100">Item: {scanResult.name} • Category: {scanResult.category} • Reward: +{scanResult.creditsAwarded} Eco-Credits</p>
             </div>
 
             <form onSubmit={handleConfirmPickupBooking} className="p-6 space-y-4">

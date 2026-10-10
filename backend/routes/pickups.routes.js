@@ -22,7 +22,8 @@ router.post('/schedule', async (req, res) => {
   try {
     const { 
       itemId, itemName, itemIcon, stream, streamLabel, 
-      weightEst, credits, co2Grams, pickupDate, timeSlot, address, instructions, userId = 'usr_resident_01'
+      weightEst, credits, co2Grams, pickupDate, timeSlot, address, instructions, userId = 'usr_resident_01',
+      image, itemImage
     } = req.body;
 
     if (!itemName || !pickupDate || !address) {
@@ -48,6 +49,8 @@ router.post('/schedule', async (req, res) => {
       itemId: itemId || 'custom_item',
       itemName,
       itemIcon: itemIcon || '📦',
+      image: image || itemImage || null,
+      itemImage: image || itemImage || null,
       stream: finalStream,
       streamLabel: finalStream,
       weightEst: weightEst || '1.0 kg',

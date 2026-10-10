@@ -169,6 +169,9 @@ export default function App() {
   // Pickup Scheduling Handler
   const handleSchedulePickup = (newBooking) => {
     setPickups((prev) => [newBooking, ...prev]);
+    if (newBooking) {
+      api.schedulePickup(newBooking).catch((err) => console.warn('[App] Cloud pickup sync:', err.message));
+    }
   };
 
   // Picker Verification Handler
