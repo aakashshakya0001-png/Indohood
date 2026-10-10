@@ -526,20 +526,32 @@ export default function ResidentDashboard({
       (user?.email && p.userEmail && p.userEmail.toLowerCase() === user.email.toLowerCase())
     );
 
+    // Look up creator from the registered database users to get their real profile name
+    const authorUser = (areaUsersList || []).find((u) => 
+      (p.userId && (u.id === p.userId || u.email === p.userId)) ||
+      (p.userEmail && u.email && u.email.toLowerCase() === p.userEmail.toLowerCase())
+    );
+
+    const resolvedName = isMine
+      ? (profileName || user?.name || 'You (Resident Citizen)')
+      : (authorUser?.name || p.userName || (authorUser?.email ? authorUser.email.split('@')[0] : 'Resident Citizen'));
+
+    const resolvedAvatar = isMine
+      ? (profileImage || user?.avatar || null)
+      : (authorUser?.avatar || p.userAvatar || null);
+
+    const resolvedLocation = isMine
+      ? (profileLocation || (user?.address ? user.address.split(',')[0] : 'Flat 402, Green Valley Apartments'))
+      : (authorUser?.location || authorUser?.address || p.userLocation || 'Green Valley Society');
+
     return {
       id: `user_pck_${p.id}`,
       pickupId: p.id,
       isCurrentUser: isMine,
-      userName: isMine
-        ? (profileName || user?.name || 'You (Resident Citizen)')
-        : (p.userName || 'Neighbor Citizen'),
-      userLocation: isMine
-        ? (profileLocation || (user?.address ? user.address.split(',')[0] : 'Flat 402, Green Valley Apartments'))
-        : (p.userLocation || 'Green Valley Society'),
+      userName: resolvedName,
+      userLocation: resolvedLocation,
       society: p.society || 'Green Valley Society',
-      userAvatar: isMine
-        ? (profileImage || user?.avatar || null)
-        : (p.userAvatar || null),
+      userAvatar: resolvedAvatar,
       actionTitle: isCompleted
         ? `Recycled & Handed Over: ${p.itemName}`
         : `Scheduled Doorstep Handover for ${p.itemName}`,
@@ -1236,14 +1248,15 @@ export default function ResidentDashboard({
   const treesEq = ((impactStats?.co2PreventedGrams || 0) / 21770).toFixed(2);
 
   // 4. Real-Time Activity Verification:
-  // Check if the user has performed ANY real activities on the platform yet
-  const completedPickupsCount = (pickups || []).filter((p) => p.status === 'COMPLETED').length;
-  const scheduledPickupsCount = (pickups || []).filter((p) => p.status === 'SCHEDULED').length;
-  const itemsSegregatedCount = impactStats?.itemsSegregated || 0;
+  // Strictly check if the current user personally performed ANY real activities on the platform yet
+  const myCompletedPickupsCount = userPickupActivities.filter((p) => p.status === 'COMPLETED').length;
+  const myTotalPickupsCount = userPickupActivities.length;
+  const itemsSegregatedCount = impactStats?.itemsSegregated || myTotalPickupsCount;
   const co2PreventedGrams = impactStats?.co2PreventedGrams || 0;
   const currentWallet = walletBalance || 0;
 
-  const hasUserActivity = currentWallet > 0 || completedPickupsCount > 0 || scheduledPickupsCount > 0 || itemsSegregatedCount > 0 || co2PreventedGrams > 0;
+  // STRICT: User only has activity if THEY personally scheduled/completed pickups, segregated items, or earned credits
+  const hasUserActivity = myTotalPickupsCount > 0 || currentWallet > 0 || co2PreventedGrams > 0;
 
   // 5. Area / Location Identification
   const rawLocation = (user?.location || profileLocation || '').trim();
@@ -1253,20 +1266,20 @@ export default function ResidentDashboard({
 
   // Benchmark community residents across major Indian cities for competitive ranking
   const REGIONAL_AREA_BENCHMARKS = [
-    { id: 'b_delhi_1', name: 'Rohan Gupta', city: 'New Delhi', score: 380 },
-    { id: 'b_delhi_2', name: 'Sanya Malhotra', city: 'New Delhi', score: 290 },
-    { id: 'b_delhi_3', name: 'Amit Verma', city: 'New Delhi', score: 210 },
-    { id: 'b_blr_1', name: 'Kavita Iyer', city: 'Bengaluru', score: 340 },
-    { id: 'b_blr_2', name: 'Pranav Rao', city: 'Bengaluru', score: 220 },
-    { id: 'b_pune_1', name: 'Deepak Joshi', city: 'Pune', score: 190 },
-    { id: 'b_pune_2', name: 'Neha Kulkarni', city: 'Pune', score: 140 },
-    { id: 'b_mum_1', name: 'Pooja Chawla', city: 'Mumbai', score: 270 },
-    { id: 'b_mum_2', name: 'Aditya Mehta', city: 'Mumbai', score: 180 },
+    { id: 'b_1', name: 'Rohan Gupta', score: 320 },
+    { id: 'b_2', name: 'Sanya Malhotra', score: 210 },
+    { id: 'b_3', name: 'Amit Verma', score: 140 },
+    { id: 'b_4', name: 'Neha Kulkarni', score: 70 },
   ];
 
-  // Current user's composite civic impact score: Credits + (CO2 kg * 10) + (Landfill kg * 5)
+  // Current user's composite civic impact score directly powered by their activities:
+  // Activity Credits + Activity Bonus (50 pts each) + CO2/Landfill environmental points + Wallet balance
+  const userActivitiesCredits = userPickupActivities.reduce((sum, act) => sum + (Number(act.creditsEarned) || 25), 0);
+  const activityBonus = userPickupActivities.length * 50;
+  const envScore = Math.round((parseFloat(co2Kg) * 20) + (parseFloat(landfillKg) * 10));
+
   const currentUserScore = hasUserActivity
-    ? (currentWallet + (parseFloat(co2Kg) * 10) + (parseFloat(landfillKg) * 5))
+    ? (currentWallet + userActivitiesCredits + activityBonus + envScore)
     : 0;
 
   // Calculate dynamic rank: compare strictly with active peers in the user's area
@@ -1274,38 +1287,16 @@ export default function ResidentDashboard({
   let totalRankedInArea = 0;
 
   if (hasUserActivity) {
-    const rawLocLower = rawLocation.toLowerCase();
-
-    // Check database users in the same area who have active score
-    let areaPeers = areaUsersList.filter((peer) => {
-      if (peer.id === user?.id) return false;
-      const peerLoc = (peer.location || '').toLowerCase();
-      const isSameArea = !rawLocLower || (peerLoc && (peerLoc.includes(rawLocLower) || rawLocLower.includes(peerLoc)));
-      const peerScore = peer.walletBalance || 0;
-      return isSameArea && peerScore > 0;
-    }).map((peer) => ({
-      id: peer.id,
-      score: peer.walletBalance || 0,
-    }));
-
-    // If few or no database peers in this city yet, use benchmark active residents in that city
-    if (areaPeers.length === 0) {
-      const matched = REGIONAL_AREA_BENCHMARKS.filter(b => 
-        !rawLocLower || b.city.toLowerCase().includes(rawLocLower) || rawLocLower.includes(b.city.toLowerCase())
-      );
-      areaPeers = (matched.length > 0 ? matched : REGIONAL_AREA_BENCHMARKS);
-    }
-
     // Dynamic rank: count how many active peers hold a higher score than current user
-    const peersAhead = areaPeers.filter(p => p.score > currentUserScore).length;
+    const peersAhead = REGIONAL_AREA_BENCHMARKS.filter(p => p.score > currentUserScore).length;
     areaRank = peersAhead + 1;
-    totalRankedInArea = areaPeers.length + 1;
+    totalRankedInArea = REGIONAL_AREA_BENCHMARKS.length + 1;
   }
 
   // Real-time zero-contamination accuracy score based on verified clean source segregation
-  const zeroContaminationScore = completedPickupsCount > 0
-    ? Math.min(99.9, 98.4 + (completedPickupsCount * 0.3)).toFixed(1)
-    : '98.5';
+  const zeroContaminationScore = myCompletedPickupsCount > 0
+    ? Math.min(99.9, 98.4 + (myCompletedPickupsCount * 0.3)).toFixed(1)
+    : (myTotalPickupsCount > 0 ? '98.8' : '0.0');
 
   const filteredDiyIdeas = diyCategory === 'all'
     ? DIY_HOME_IDEAS

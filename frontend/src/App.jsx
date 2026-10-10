@@ -135,7 +135,14 @@ export default function App() {
     });
 
     const userCo2 = myPickups.reduce((sum, p) => sum + (Number(p.co2Grams) || 110), 0);
-    const userLandfill = myPickups.reduce((sum, p) => sum + (Number(p.weightGrams) || 500), 0);
+    const userLandfill = myPickups.reduce((sum, p) => {
+      if (typeof p.weightGrams === 'number' && p.weightGrams > 0) return sum + p.weightGrams;
+      if (p.weightEst) {
+        const val = parseFloat(p.weightEst) || 0.5;
+        return sum + (p.weightEst.includes('kg') ? Math.round(val * 1000) : Math.round(val));
+      }
+      return sum + 500;
+    }, 0);
     const userItems = myPickups.length;
 
     setImpactStats({
