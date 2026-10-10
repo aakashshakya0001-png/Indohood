@@ -11,7 +11,6 @@ export default function AuthModal({ isOpen, initialMode, onClose, onLoginSuccess
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [otp, setOtp] = useState('');
-  const [sentOtpPreview, setSentOtpPreview] = useState('');
   
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -76,8 +75,8 @@ export default function AuthModal({ isOpen, initialMode, onClose, onLoginSuccess
     try {
       const res = await api.sendVerificationOtp(email);
       if (res && res.success) {
-        setSentOtpPreview(res.otp || '');
         setRegisterStep('otp');
+        setSuccessNotice('Verification code sent to your email. Please check your inbox!');
       } else {
         setErrorMessage(res?.message || 'Failed to send verification code. Please check your email.');
       }
@@ -459,28 +458,26 @@ export default function AuthModal({ isOpen, initialMode, onClose, onLoginSuccess
               </div>
 
               <div className="text-center">
-                <h4 className="text-base font-black text-stone-900">Enter Verification Code</h4>
+                <h4 className="text-base font-black text-stone-900">Check Your Email</h4>
                 <p className="text-xs text-stone-600 mt-1">
-                  We've generated a 6-digit verification code for:
+                  We've sent a 6-digit verification code to:
                 </p>
                 <p className="text-xs font-bold text-emerald-800 mt-0.5 bg-emerald-50 py-1 px-2.5 rounded-lg inline-block border border-emerald-100">
                   {email}
                 </p>
               </div>
 
-              {/* Instant Verification Code Helper */}
-              {sentOtpPreview && (
-                <div className="p-2.5 rounded-xl bg-teal-50 border border-teal-200 text-teal-800 text-xs text-center flex items-center justify-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                  <span>
-                    Your verification code is: <strong className="font-mono text-sm tracking-wider font-bold text-teal-900">{sentOtpPreview}</strong>
-                  </span>
-                </div>
-              )}
+              {/* Secure Notice */}
+              <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200/80 text-emerald-900 text-xs text-center flex items-center justify-center gap-2">
+                <Mail className="w-4 h-4 text-emerald-700 shrink-0" />
+                <span>
+                  Please check your <strong>Gmail inbox</strong> (or spam folder) for the 6-digit code.
+                </span>
+              </div>
 
               <div>
                 <label className="block text-xs font-bold text-stone-700 mb-1.5 text-center">
-                  6-Digit OTP Code
+                  Enter 6-Digit Code
                 </label>
                 <input
                   type="text"
@@ -493,9 +490,19 @@ export default function AuthModal({ isOpen, initialMode, onClose, onLoginSuccess
                 />
               </div>
 
-              <p className="text-[11px] text-stone-500 text-center">
-                Enter the code above to verify your email address and create your IndoHood account.
-              </p>
+              <div className="text-center">
+                <p className="text-[11px] text-stone-500">
+                  Didn't receive the email?{' '}
+                  <button
+                    type="button"
+                    onClick={handleInitiateRegistration}
+                    disabled={loading}
+                    className="font-bold text-emerald-700 hover:text-emerald-800 underline cursor-pointer disabled:opacity-50"
+                  >
+                    Resend Code
+                  </button>
+                </p>
+              </div>
             </div>
 
             <div className="space-y-2 pt-4">

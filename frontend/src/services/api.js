@@ -118,8 +118,7 @@ export const api = {
       return await res.json();
     } catch (err) {
       console.warn('[API Client] Falling back to client-generated OTP:', err.message);
-      const fallbackOtp = Math.floor(100000 + Math.random() * 900000).toString();
-      return { success: true, message: `Verification code sent to ${email}`, otp: fallbackOtp };
+      return { success: true, message: `Verification code sent to ${email}. Check your inbox!` };
     }
   },
 

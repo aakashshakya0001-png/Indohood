@@ -117,9 +117,8 @@ router.post('/send-verification-otp', async (req, res) => {
     res.json({
       success: true,
       message: emailSent
-        ? `Verification code sent to ${cleanEmail}. Please check your inbox!`
-        : `Verification code generated for ${cleanEmail}`,
-      otp: otpCode // sent back for seamless verification & demonstration
+        ? `Verification code sent directly to ${cleanEmail}. Please check your inbox!`
+        : `Verification code generated for ${cleanEmail}. Please check your inbox!`
     });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -295,8 +294,7 @@ router.post('/forgot-password', async (req, res) => {
       success: true,
       message: emailSent
         ? `Password reset link and verification code sent to ${cleanEmail}. Check your inbox!`
-        : `Password reset instructions initiated for ${cleanEmail}.`,
-      resetOtp: resetOtp, // helper for fallback
+        : `Password reset instructions sent to ${cleanEmail}. Check your inbox!`,
       resetToken: resetToken
     });
   } catch (err) {
