@@ -33,14 +33,14 @@ export default function Hero({ onGetStarted, onExploreHowItWorks }) {
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-stone-900 tracking-tight leading-[1.15]">
             One more use.{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-700 via-teal-700 to-amber-700">
-              One less ending.
+              One less ending
             </span>
           </h1>
 
-          {/* Subheading / Brand Quote */}
+          {/* Subheading */}
           <p className="text-sm sm:text-xl font-medium text-stone-800 leading-relaxed">
             <span className="text-emerald-900 font-semibold italic">
-              “Change the way things move.”
+              "Change the way things move."
             </span>
             <br />
             From your home to their next purpose, Indohood makes every handoff smarter, easier, and more rewarding.

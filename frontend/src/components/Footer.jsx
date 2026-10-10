@@ -20,7 +20,8 @@ export default function Footer({ onNavigate }) {
             </div>
 
             <p className="text-stone-400 text-sm leading-relaxed max-w-sm">
-              <span className="font-semibold text-stone-200 block">Turn your trash into impact.</span>
+              Turn your trash into impact.
+              <br />
               AI-powered waste segregation that rewards good habits with EcoCredits.
             </p>
 

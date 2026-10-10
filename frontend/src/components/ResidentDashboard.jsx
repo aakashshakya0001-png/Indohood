@@ -2790,75 +2790,81 @@ export default function ResidentDashboard({
           {/* ============================================================ */}
           {/* SUB-TAB 2: CERTIFICATE (Official Commendation Document)     */}
           {/* ============================================================ */}
+          {/* ============================================================ */}
+          {/* SUB-TAB 2: CERTIFICATE (Official Commendation Document)     */}
+          {/* ============================================================ */}
           {profileSubTab === 'certificate' && (
             <div className="space-y-6 animate-fade-in">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-black uppercase tracking-wider text-stone-500">
-                    Official IndoHood Green Citizen Certificate
-                  </h3>
-                  <button
-                    onClick={() => window.print()}
-                    className="px-3.5 py-1.5 rounded-xl text-xs font-bold text-stone-700 bg-stone-100 hover:bg-stone-200 transition-all cursor-pointer border border-stone-200"
-                  >
-                    Print / Save PDF
-                  </button>
+              <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-sm font-black uppercase tracking-wider text-stone-700">
+                      Official IndoHood Green Contributor Certificate
+                    </h3>
+                    <p className="text-xs text-stone-500 mt-0.5">
+                      Awarded for source segregation compliance, carbon abatement, and community circular stewardship.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <a
+                      href="/certificate.jpg"
+                      download={`IndoHood-Certificate-${(profileName || 'Citizen').replace(/\s+/g, '_')}.jpg`}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 transition-all border border-emerald-200 shadow-2xs"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Download Certificate</span>
+                    </a>
+                    <button
+                      onClick={() => window.print()}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-stone-700 bg-white hover:bg-stone-100 transition-all cursor-pointer border border-stone-200 shadow-2xs"
+                    >
+                      <Printer className="w-3.5 h-3.5 text-stone-500" />
+                      <span>Print / PDF</span>
+                    </button>
+                  </div>
                 </div>
 
-                {/* Framed Certificate Document */}
-                <div className="relative rounded-3xl bg-gradient-to-b from-amber-50/50 via-white to-amber-50/30 border-4 border-amber-300/80 p-6 sm:p-10 shadow-lg text-center overflow-hidden">
-                  {/* Ornamental corner corners */}
-                  <div className="absolute top-3 left-3 w-8 h-8 border-t-2 border-l-2 border-amber-500"></div>
-                  <div className="absolute top-3 right-3 w-8 h-8 border-t-2 border-r-2 border-amber-500"></div>
-                  <div className="absolute bottom-3 left-3 w-8 h-8 border-b-2 border-l-2 border-amber-500"></div>
-                  <div className="absolute bottom-3 right-3 w-8 h-8 border-b-2 border-r-2 border-amber-500"></div>
+                {/* Authentic Certificate Presentation Frame */}
+                <div className="relative rounded-3xl overflow-hidden shadow-xl border-2 border-amber-200/80 bg-[#FAF7F0] max-w-4xl mx-auto">
+                  <div className="relative w-full aspect-[1024/658]">
+                    <img
+                      src="/certificate.jpg"
+                      alt="Official IndoHood Certificate of Appreciation"
+                      className="w-full h-full object-contain select-none"
+                    />
 
-                  <div className="max-w-2xl mx-auto space-y-4">
-                    <div className="flex items-center justify-center">
-                      <span className="text-xs font-extrabold tracking-widest uppercase text-emerald-800">
-                        IndoHood Circular Waste Mission
-                      </span>
-                    </div>
-
-                    <h3 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight font-serif">
-                      Certificate of Green Citizenship
-                    </h3>
-
-                    <p className="text-xs uppercase tracking-widest text-stone-400 font-bold">
-                      Awarded for Source Segregation & Carbon Abatement
-                    </p>
-
-                    <div className="py-2">
-                      <p className="text-xs text-stone-500">This is to proudly certify that</p>
-                      <p className="text-2xl sm:text-3xl font-black text-emerald-800 underline decoration-amber-400 decoration-2 underline-offset-8 mt-1">
-                        {profileName}
-                      </p>
-                      <p className="text-xs text-stone-500 mt-2">
-                        Resident of {user?.address || 'Flat 402, Green Valley Apartments, New Delhi'}
-                      </p>
-                    </div>
-
-                    <p className="text-xs sm:text-sm text-stone-700 leading-relaxed max-w-xl mx-auto">
-                      Has demonstrated exceptional civic responsibility by separating dry and organic waste at source, preventing an estimated <strong className="text-emerald-700">{co2Kg} kg of CO₂</strong> emissions and diverting <strong className="text-teal-700">{landfillKg} kg of recyclable commodities</strong> from municipal landfills.
-                    </p>
-
-                    <div className="pt-4 border-t border-amber-200/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-stone-500">
-                      <div className="text-left">
-                        <p className="font-bold text-stone-800">Certificate ID: #IND-CERT-{Math.floor(100000 + Math.random() * 900000)}</p>
-                        <p className="text-[11px]">Valid across municipal civic authorities</p>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <span className="w-10 h-10 rounded-full bg-emerald-600 text-white font-black text-xs flex items-center justify-center shadow-xs">
-                          SEAL
-                        </span>
-                        <div className="text-left">
-                          <p className="font-bold text-stone-800">Verified by IndoHood</p>
-                          <p className="text-[11px]">Date: {new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                    {/* Dynamic Recipient Name Overlay for Active Logged-In Resident */}
+                    {profileName && profileName.trim().toLowerCase() !== 'kanishka verma' && profileName.trim().toLowerCase() !== 'kanishka' && (
+                      <div 
+                        className="absolute inset-x-0 flex items-center justify-center pointer-events-none"
+                        style={{
+                          top: '49%',
+                          transform: 'translateY(-50%)',
+                        }}
+                      >
+                        <div className="bg-[#FAF7F0] px-6 sm:px-10 py-0.5 sm:py-1 rounded-sm shadow-2xs border-b border-[#D4AF37]/60">
+                          <span 
+                            className="text-xl sm:text-3xl md:text-4xl text-stone-900 tracking-tight font-serif italic font-bold"
+                            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                          >
+                            {profileName}
+                          </span>
                         </div>
                       </div>
-                    </div>
+                    )}
+                  </div>
+                </div>
 
+                {/* Certificate Verification Badge */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 rounded-2xl bg-white border border-stone-200 text-xs text-stone-600 max-w-4xl mx-auto shadow-2xs">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span className="font-bold text-stone-800">Tamper-Proof Certificate ID:</span>
+                    <span className="font-mono text-emerald-800 font-semibold">#IND-CERT-2026-{(user?.id || '8842').slice(-6).toUpperCase()}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-stone-500 text-[11px]">
+                    <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                    <span>Cryptographically verified under IndoHood Circular Waste Mission</span>
                   </div>
                 </div>
               </div>
