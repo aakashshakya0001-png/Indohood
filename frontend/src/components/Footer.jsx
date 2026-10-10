@@ -20,7 +20,8 @@ export default function Footer({ onNavigate }) {
             </div>
 
             <p className="text-stone-400 text-sm leading-relaxed max-w-sm">
-              Empowering Indian households to segregate at source, eliminate landfill waste through Amazon Bedrock multimodal AI, and turn civic responsibility into tangible Eco-Credits.
+              <span className="font-semibold text-stone-200 block">Turn your trash into impact.</span>
+              AI-powered waste segregation that rewards good habits with EcoCredits.
             </p>
 
             <div className="inline-flex items-center px-3 py-1.5 rounded-xl bg-stone-800/80 border border-stone-700/80 text-xs font-medium text-stone-300">

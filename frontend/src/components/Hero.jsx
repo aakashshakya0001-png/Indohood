@@ -31,19 +31,19 @@ export default function Hero({ onGetStarted, onExploreHowItWorks }) {
           
           {/* Main Headline */}
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-stone-900 tracking-tight leading-[1.15]">
-            Kachra alag karo,{' '}
+            One more use.{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-700 via-teal-700 to-amber-700">
-              Eco-Credits pao!
+              One less ending.
             </span>
           </h1>
 
-          {/* Subheading / Cultural Quote */}
+          {/* Subheading / Brand Quote */}
           <p className="text-sm sm:text-xl font-medium text-stone-800 leading-relaxed">
             <span className="text-emerald-900 font-semibold italic">
-              "Jo tumhare liye kabaad hai, wo kisi ke liye zaroorat hai."
+              “Change the way things move.”
             </span>
             <br />
-            Scan household waste with AI, schedule doorstep collection, reduce carbon emissions, and redeem real rewards at the IndoHood Store.
+            From your home to their next purpose, Indohood makes every handoff smarter, easier, and more rewarding.
           </p>
 
           {/* Clean CTA Buttons */}

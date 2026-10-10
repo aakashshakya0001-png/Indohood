@@ -34,7 +34,7 @@ export default function HowItWorks({ onGetStarted }) {
             Turns into tangible value
           </h2>
           <p className="text-base text-stone-600">
-            A seamless 4-step civic flow engineered for Indian households to maximize recycling and eliminate landfill dumping.
+            Your everyday stuff deserves more than a one-way trip to the landfill. Sort it, send it, earn from it, and give it another life.
           </p>
         </div>
 
