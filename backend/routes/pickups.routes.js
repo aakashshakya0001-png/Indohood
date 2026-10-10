@@ -22,7 +22,8 @@ router.post('/schedule', async (req, res) => {
   try {
     const { 
       itemId, itemName, itemIcon, stream, streamLabel, 
-      weightEst, credits, co2Grams, pickupDate, timeSlot, address, instructions, userId = 'usr_resident_01',
+      weightEst, credits, co2Grams, pickupDate, timeSlot, address, instructions, 
+      userId, userEmail, userName, userAvatar, userLocation, society,
       image, itemImage
     } = req.body;
 
@@ -45,7 +46,12 @@ router.post('/schedule', async (req, res) => {
       bookingRef: `IND-${Math.floor(1000 + Math.random() * 9000)}`,
       createdAt: new Date().toISOString(),
       status: 'SCHEDULED',
-      userId,
+      userId: userId || 'usr_resident_01',
+      userEmail: userEmail || null,
+      userName: userName || 'Resident Citizen',
+      userAvatar: userAvatar || null,
+      userLocation: userLocation || (address ? address.split(',')[0] : 'Green Valley Apartments'),
+      society: society || 'Green Valley Society',
       itemId: itemId || 'custom_item',
       itemName,
       itemIcon: itemIcon || '📦',

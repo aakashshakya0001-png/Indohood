@@ -100,6 +100,51 @@ export default function App() {
     }
   }, [impactStats]);
 
+  // Cross-device cloud sync: Fetch all community pickups from AWS DynamoDB on app launch and user login
+  useEffect(() => {
+    let isMounted = true;
+    const fetchCloudPickups = async () => {
+      try {
+        const cloudPickups = await api.getPickups();
+        if (isMounted && Array.isArray(cloudPickups)) {
+          setPickups(cloudPickups);
+        }
+      } catch (err) {
+        console.warn('[App] Could not fetch cloud pickups from DynamoDB:', err.message);
+      }
+    };
+    fetchCloudPickups();
+    return () => { isMounted = false; };
+  }, [currentUser?.id, currentUser?.email]);
+
+  // Dynamically compute user-specific environmental impact stats from user's own pickups
+  useEffect(() => {
+    if (!currentUser) {
+      setImpactStats({
+        co2PreventedGrams: 0,
+        landfillDivertedGrams: 0,
+        itemsSegregated: 0,
+      });
+      return;
+    }
+
+    const myPickups = (pickups || []).filter((p) => {
+      const matchId = currentUser.id && p.userId && (p.userId === currentUser.id || p.userId === currentUser.email);
+      const matchEmail = currentUser.email && p.userEmail && p.userEmail.toLowerCase() === currentUser.email.toLowerCase();
+      return matchId || matchEmail;
+    });
+
+    const userCo2 = myPickups.reduce((sum, p) => sum + (Number(p.co2Grams) || 110), 0);
+    const userLandfill = myPickups.reduce((sum, p) => sum + (Number(p.weightGrams) || 500), 0);
+    const userItems = myPickups.length;
+
+    setImpactStats({
+      co2PreventedGrams: userCo2,
+      landfillDivertedGrams: userLandfill,
+      itemsSegregated: userItems,
+    });
+  }, [pickups, currentUser]);
+
   // Navigation Handler
   const handleNavigate = (sectionId) => {
     if (sectionId === 'hero') {
@@ -133,8 +178,10 @@ export default function App() {
 
   const handleLoginSuccess = (profile) => {
     setCurrentUser(profile);
+    setWalletBalance(Number(profile?.walletBalance) || 0);
     try {
       localStorage.setItem('indohood_user', JSON.stringify(profile));
+      localStorage.setItem('indohood_wallet', (Number(profile?.walletBalance) || 0).toString());
     } catch (e) {
       console.warn('Failed to store user profile:', e);
     }
@@ -142,9 +189,18 @@ export default function App() {
 
   const handleLogout = () => {
     setCurrentUser(null);
+    setWalletBalance(0);
+    setImpactStats({
+      co2PreventedGrams: 0,
+      landfillDivertedGrams: 0,
+      itemsSegregated: 0,
+    });
     try {
       localStorage.removeItem('indohood_user');
+      localStorage.removeItem('indohood_wallet');
+      localStorage.removeItem('indohood_impact');
       localStorage.removeItem('indohood_active_tab');
+      localStorage.removeItem('indohood_pickups');
     } catch (e) {
       console.warn('Failed to clear session on logout:', e);
     }

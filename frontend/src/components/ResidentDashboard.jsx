@@ -488,7 +488,7 @@ export default function ResidentDashboard({
   };
 
   // Derive user-performed doorstep collection & recycling activities from pickups prop
-  const userPickupActivities = (pickups || []).map((p) => {
+  const mappedPickupActivities = (pickups || []).map((p) => {
     const isCompleted = p.status === 'COMPLETED';
     let category = 'Non-Degradable';
     const rawCat = (p.stream || p.streamLabel || '').toLowerCase();
@@ -520,14 +520,26 @@ export default function ResidentDashboard({
       }
     }
 
+    // Determine if this pickup was created by the currently logged-in citizen
+    const isMine = !!(
+      (user?.id && p.userId && (p.userId === user.id || p.userId === user.email)) ||
+      (user?.email && p.userEmail && p.userEmail.toLowerCase() === user.email.toLowerCase())
+    );
+
     return {
       id: `user_pck_${p.id}`,
       pickupId: p.id,
-      isCurrentUser: true,
-      userName: profileName || user?.name || 'You (Resident Citizen)',
-      userLocation: user?.address ? user?.address.split(',')[0] : 'Flat 402, Green Valley Apartments',
-      society: 'Green Valley Society',
-      userAvatar: profileImage || user?.avatar || null,
+      isCurrentUser: isMine,
+      userName: isMine
+        ? (profileName || user?.name || 'You (Resident Citizen)')
+        : (p.userName || 'Neighbor Citizen'),
+      userLocation: isMine
+        ? (profileLocation || (user?.address ? user.address.split(',')[0] : 'Flat 402, Green Valley Apartments'))
+        : (p.userLocation || 'Green Valley Society'),
+      society: p.society || 'Green Valley Society',
+      userAvatar: isMine
+        ? (profileImage || user?.avatar || null)
+        : (p.userAvatar || null),
       actionTitle: isCompleted
         ? `Recycled & Handed Over: ${p.itemName}`
         : `Scheduled Doorstep Handover for ${p.itemName}`,
@@ -545,8 +557,12 @@ export default function ResidentDashboard({
     };
   });
 
-  const allActivities = [...userPickupActivities, ...communityActivitiesList];
-  const userActivitiesCount = userPickupActivities.length + communityActivitiesList.filter(a => a.isCurrentUser).length;
+  // User's own activities (rendered in Profile tab)
+  const userPickupActivities = mappedPickupActivities.filter((act) => act.isCurrentUser);
+
+  // All activities for Community Explore Feed
+  const allActivities = [...mappedPickupActivities, ...communityActivitiesList];
+  const userActivitiesCount = userPickupActivities.length;
 
   const filteredActivities = allActivities.filter((act) => {
     if (activityCategoryFilter === 'All') return true;
@@ -1132,6 +1148,12 @@ export default function ResidentDashboard({
     onSchedulePickup({
       id: 'pk_' + Date.now(),
       bookingRef: 'IND-' + Math.floor(1000 + Math.random() * 9000),
+      userId: user?.id || user?.email || 'usr_resident_01',
+      userEmail: user?.email || '',
+      userName: profileName || user?.name || 'Resident Citizen',
+      userAvatar: profileImage || user?.avatar || null,
+      userLocation: profileLocation || (user?.address ? user.address.split(',')[0] : 'Flat 402, Green Valley Apartments'),
+      society: 'Green Valley Society',
       itemId: scanResult.id,
       itemName: scanResult.name,
       itemIcon: scanResult.icon,
