@@ -1,4 +1,4 @@
-# IndoHood (इण्डोहूड) 🌱
+# IndoHood 
 
 > **"One more use. One less ending."**  
 > *AI-Powered Household Waste Segregation, Circular Recycling & Green Rewards Ecosystem.*
@@ -105,7 +105,7 @@ flowchart TD
 * *Note: Hardware is a future step.*
 
 ### 02. Route Optimization
-* Automatically group nearby doorstep pickup requests into shorter, more efficient travel routes for local *kabadiwalas* and eco-pickers using Amazon Location Service routing, cutting transit time and fuel consumption.
+* Automatically group nearby doorstep pickup requests into shorter, more efficient travel routes for pickers using Amazon Location Service routing, cutting transit time and fuel consumption.
 
 ### 03. Hyperlocal Postal Rankings
 * Expand leaderboard clustering by municipal postal code and ward boundaries to keep civic leaderboards relevant, competitive, and fair within local apartment societies and RWAs.
