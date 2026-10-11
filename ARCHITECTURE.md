@@ -1,4 +1,4 @@
-# Indohood (इण्डोहूड) — System Architecture 🏛️
+# Indohood — System Architecture 🏛️
 
 **Indohood** is an AI-powered household waste segregation, smart pickup scheduling, and civic green-credits ecosystem designed for **Track 03 (Waste & Energy)** of the **WeMakeDevs & AWS Environmental Hacks**.
 
