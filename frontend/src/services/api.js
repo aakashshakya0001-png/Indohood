@@ -107,6 +107,22 @@ export const api = {
     }
   },
 
+  // Amazon Location Service Geocoding
+  reverseGeocode: async ({ latitude, longitude }) => {
+    try {
+      const res = await fetch(`${API_BASE}/location/reverse-geocode`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ latitude, longitude }),
+      });
+      const data = await res.json();
+      return data.success ? data.data : null;
+    } catch (err) {
+      console.warn('[API Client] Reverse geocoding failed:', err.message);
+      return null;
+    }
+  },
+
   // Auth & Email Verification
   sendVerificationOtp: async (email) => {
     try {

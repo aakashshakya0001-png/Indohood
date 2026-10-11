@@ -37,13 +37,14 @@ router.get('/profile/:id', async (req, res) => {
 // PUT /api/users/profile/:id (Update bio, avatar, name, address, location)
 router.put('/profile/:id', async (req, res) => {
   try {
-    const { name, bio, avatar, address, location, walletBalance } = req.body;
+    const { name, bio, avatar, address, location, walletBalance, coordinates } = req.body;
     const updates = {
       ...(name && { name }),
       ...(bio !== undefined && { bio }),
       ...(avatar !== undefined && { avatar }),
       ...(address && { address }),
       ...(location !== undefined && { location }),
+      ...(coordinates !== undefined && { coordinates }),
       ...(walletBalance !== undefined && { walletBalance: Number(walletBalance) }),
     };
 

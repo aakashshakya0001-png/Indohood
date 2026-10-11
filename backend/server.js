@@ -9,6 +9,7 @@ import pickupsRoutes from './routes/pickups.routes.js';
 import usersRoutes from './routes/users.routes.js';
 import activitiesRoutes from './routes/activities.routes.js';
 import articlesRoutes from './routes/articles.routes.js';
+import locationRoutes from './routes/location.routes.js';
 
 dotenv.config();
 
@@ -46,6 +47,7 @@ app.use('/api/pickups', pickupsRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/activities', activitiesRoutes);
 app.use('/api/articles', articlesRoutes);
+app.use('/api/location', locationRoutes);
 
 // Global Error Handler
 app.use((err, req, res, next) => {
